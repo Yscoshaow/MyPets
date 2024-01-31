@@ -232,7 +232,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         if (currentReconnectAttempts < maxReconnectAttempts) {
             currentReconnectAttempts++
             Handler().postDelayed({
-                context
+                bleConnect()
             }, 1000)
         } else {
             viewModel.availabilityDevice.value = viewModel.availabilityDevice.value - this
