@@ -5,12 +5,13 @@ conversations:
       firstGreeting:
         conditions: "!postDone"
         text: "你就是韶韶说的那个孩子吧？"
+        pointer: "answer"
       post:
         text: "真可爱我们，一起来拍个照吧"
+        events: "postPicture"
     player_options:
       answer:
         text: "嗯嗯，就是我"
-        events: "postPicture"
   yscos_shaow:
     first: "firstTaskDone,firstGreeting"
     NPC_options:

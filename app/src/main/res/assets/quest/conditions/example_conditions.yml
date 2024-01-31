@@ -1,2 +1,3 @@
 conditions:
   firstTaskDoneTag: "tag firstTaskDoneTag"
+  postDone: "tag postDone"
