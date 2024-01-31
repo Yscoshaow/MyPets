@@ -1,0 +1,12 @@
+{
+    "npc": "yscos_shaow",
+    "npc_options": {
+        "firstGreeting" : {
+            "text": "你好呀",
+            "pointer": ""
+        }
+    },
+    "player_options": {
+        
+    }
+}
