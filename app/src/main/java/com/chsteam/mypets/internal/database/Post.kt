@@ -50,8 +50,8 @@ data class Post(
 
     private val npcDao: NpcDao by inject()
 
-    var npc: MutableStateFlow<Npc?> = MutableStateFlow(null)
-    var imageBitmaps: MutableStateFlow<List<ImageBitmap>?> = MutableStateFlow(null)
+    private var npc: MutableStateFlow<Npc?> = MutableStateFlow(null)
+    private var imageBitmaps: MutableStateFlow<List<ImageBitmap>> = MutableStateFlow(emptyList())
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -84,7 +84,7 @@ data class Post(
     fun PostCard() {
         val npcData by npc.collectAsState()
         val images by imageBitmaps.collectAsState()
-        if (npcData != null && images != null) {
+        if (npcData != null) {
             ElevatedCard {
                 Column {
                     Row(
@@ -100,7 +100,7 @@ data class Post(
                         Spacer(modifier = Modifier.height(8.dp))
                         LazyColumn {
                             item {
-                                images!!.forEach {
+                                images.forEach {
                                     Image(
                                         bitmap = it,
                                         contentDescription = "Post Picture"
