@@ -2,7 +2,6 @@ package com.chsteam.mypets.internal.compatibility.dungeonlab
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,11 +28,11 @@ import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.DGLabStruc
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleNotifyCallback
+import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
 import kotlinx.coroutines.DelicateCoroutinesApi
-import java.util.UUID
 
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -55,103 +54,18 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     override val tickRate: Int
         get() = 10
 
+
     val channelA = mutableStateOf(0)
     val channelB = mutableStateOf(0)
-
-    val az = mutableStateOf(0)
-    val ay = mutableStateOf(0)
-    val ax = mutableStateOf(0)
-
-    val bz = mutableStateOf(0)
-    val by = mutableStateOf(0)
-    val bx = mutableStateOf(0)
-
-    private fun waveSender(a: DGLabStruct.WaveData, b: DGLabStruct.WaveData) {
-        BleManager.getInstance().write(
-            bleDevice,
-            FUNCTION,
-            A_WAVE,
-            a.wave,
-            object : BleWriteCallback() {
-                override fun onWriteSuccess(current: Int, total: Int, justWrite: ByteArray) {}
-                override fun onWriteFailure(exception: BleException) {}
-            })
-        BleManager.getInstance().write(
-            bleDevice,
-            FUNCTION,
-            B_WAVE,
-            b.wave,
-            object : BleWriteCallback() {
-                override fun onWriteSuccess(current: Int, total: Int, justWrite: ByteArray) {}
-                override fun onWriteFailure(exception: BleException) {}
-            })
-    }
-
-    private fun powerSender(power: ByteArray) {
-        BleManager.getInstance().write(
-            bleDevice,
-            FUNCTION,
-            STRENGTH,
-            power,
-            object : BleWriteCallback() {
-                override fun onWriteSuccess(current: Int, total: Int, justWrite: ByteArray) {}
-                override fun onWriteFailure(exception: BleException) {}
-            })
-    }
-
-    private fun powerCallback(a: Int, b: Int) {
-        this.channelA.value = a
-        this.channelB.value = b
-    }
-
-    private fun batteryCallback(level: Int) {
-        battery.value = level
-    }
 
     val device = DGLabBLEDevice(::waveSender, ::powerSender, ::powerCallback, ::batteryCallback)
 
     init {
-        BleManager.getInstance().connect(bleDevice, object : BleGattCallback() {
-            override fun onStartConnect() {
+        bleConnect()
+    }
 
-            }
-            override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
-
-            }
-            override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
-                viewModel.availabilityDevice.value = viewModel.availabilityDevice.value + this@DungeonLabV2
-                BleManager.getInstance().notify(
-                    bleDevice,
-                    FUNCTION,
-                    STRENGTH,
-                    object : BleNotifyCallback() {
-                        override fun onNotifySuccess() {}
-                        override fun onNotifyFailure(exception: BleException) {}
-                        override fun onCharacteristicChanged(data: ByteArray) {
-                            device.callbackPower(data)
-                        }
-                    })
-                BleManager.getInstance().notify(
-                    bleDevice,
-                    BATTERY,
-                    BATTERY_NOTIFY,
-                    object : BleNotifyCallback() {
-                        override fun onNotifySuccess() {}
-                        override fun onNotifyFailure(exception: BleException) {}
-                        override fun onCharacteristicChanged(data: ByteArray) {
-                            device.callbackBattery(data)
-                        }
-                    })
-            }
-            override fun onDisConnected(
-                isActiveDisConnected: Boolean,
-                bleDevice: BleDevice,
-                gatt: BluetoothGatt,
-                status: Int
-            ) {
-
-            }
-        })
+    override fun tick() {
+        device.callAutoWaveTimer()
     }
 
     @Composable
@@ -203,10 +117,12 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
             onValueChange = { fl ->
                 if(channelName.contains("A")) {
                     channelA.value = fl.toInt()
-                    device.selectPower(channelA.value, channelB.value)
+                    device.channelAPower = fl.toInt()
+                    device.selectPower()
                 } else {
                     channelB.value = fl.toInt()
-                    device.selectPower(channelA.value, channelB.value)
+                    device.channelBPower = fl.toInt()
+                    device.selectPower()
                 }
             },
             valueRange = 0f..2047f
@@ -216,8 +132,98 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         }
     }
 
-    override fun tick() {
-        device.callAutoWaveTimer()
+    private fun waveSender(a: DGLabStruct.WaveData, b: DGLabStruct.WaveData) {
+        BleManager.getInstance().write(
+            bleDevice,
+            FUNCTION,
+            A_WAVE,
+            a.wave,
+            object : BleWriteCallback() {
+                override fun onWriteSuccess(current: Int, total: Int, justWrite: ByteArray) {}
+                override fun onWriteFailure(exception: BleException) {}
+            })
+        BleManager.getInstance().write(
+            bleDevice,
+            FUNCTION,
+            B_WAVE,
+            b.wave,
+            object : BleWriteCallback() {
+                override fun onWriteSuccess(current: Int, total: Int, justWrite: ByteArray) {}
+                override fun onWriteFailure(exception: BleException) {}
+            })
     }
 
+    private fun powerSender(power: ByteArray) {
+        BleManager.getInstance().write(
+            bleDevice,
+            FUNCTION,
+            STRENGTH,
+            power,
+            object : BleWriteCallback() {
+                override fun onWriteSuccess(current: Int, total: Int, justWrite: ByteArray) {}
+                override fun onWriteFailure(exception: BleException) {}
+            })
+    }
+
+    private fun powerCallback(a: Int, b: Int) {
+        this.channelA.value = a
+        this.channelB.value = b
+    }
+
+    private fun batteryCallback(level: Int) {
+        battery.value = level
+    }
+
+    private fun bleConnect() {
+        BleManager.getInstance().connect(bleDevice, object : BleGattCallback() {
+            override fun onStartConnect() {
+
+            }
+            override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
+
+            }
+            override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
+                viewModel.availabilityDevice.value = viewModel.availabilityDevice.value + this@DungeonLabV2
+                BleManager.getInstance().notify(
+                    bleDevice,
+                    BATTERY,
+                    BATTERY_NOTIFY,
+                    object : BleNotifyCallback() {
+                        override fun onNotifySuccess() {}
+                        override fun onNotifyFailure(exception: BleException) {}
+                        override fun onCharacteristicChanged(data: ByteArray) {
+                            device.callbackBattery(data)
+                        }
+                    })
+                BleManager.getInstance().read(
+                    bleDevice,
+                    BATTERY,
+                    BATTERY_NOTIFY,
+                    object : BleReadCallback() {
+                        override fun onReadSuccess(data: ByteArray) {
+                            device.callbackBattery(data)
+                        }
+                        override fun onReadFailure(exception: BleException) {}
+                    })
+                BleManager.getInstance().read(
+                    bleDevice,
+                    FUNCTION,
+                    STRENGTH,
+                    object : BleReadCallback() {
+                        override fun onReadSuccess(data: ByteArray) {
+                            device.callbackPower(data)
+                        }
+                        override fun onReadFailure(exception: BleException) {}
+                    })
+            }
+            override fun onDisConnected(
+                isActiveDisConnected: Boolean,
+                bleDevice: BleDevice,
+                gatt: BluetoothGatt,
+                status: Int
+            ) {
+
+            }
+        })
+    }
 }

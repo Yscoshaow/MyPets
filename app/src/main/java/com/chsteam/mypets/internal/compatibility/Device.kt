@@ -23,6 +23,7 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
     val battery = mutableStateOf(0)
 
     var locked = false
+        protected set
 
     var initialized = false
 

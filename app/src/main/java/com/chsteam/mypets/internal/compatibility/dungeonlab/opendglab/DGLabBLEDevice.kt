@@ -1,17 +1,9 @@
 package com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab
 
 class DGLabBLEDevice(val waveSender: (a: DGLabStruct.WaveData, b: DGLabStruct.WaveData) -> Unit, val powerSender: (power: ByteArray) -> Unit, val powerCallback: (a: Int, b: Int) -> Unit, val batteryCallback: (level: Int) -> Unit) {
-    companion object {
-        const val serviceBattery = "955a180a-0fe2-f5aa-a094-84b8d4f3e8ad"
-        const val characteristicBattery = "955a1500-0fe2-f5aa-a094-84b8d4f3e8ad"
-        const val serviceEStim = "955a180b-0fe2-f5aa-a094-84b8d4f3e8ad"
-        const val characteristicEStimPower = "955a1504-0fe2-f5aa-a094-84b8d4f3e8ad"
-        const val characteristicEStimA = "955a1505-0fe2-f5aa-a094-84b8d4f3e8ad"
-        const val characteristicEStimB = "955a1506-0fe2-f5aa-a094-84b8d4f3e8ad"
-    }
 
-    private var channelAPower = 0
-    private var channelBPower = 0
+    var channelAPower = 0
+    var channelBPower = 0
 
     private lateinit var channelAWave: Waves.AutoWaveState
     private lateinit var channelBWave: Waves.AutoWaveState
@@ -35,7 +27,8 @@ class DGLabBLEDevice(val waveSender: (a: DGLabStruct.WaveData, b: DGLabStruct.Wa
     fun selectPower(a: Int = channelAPower, b: Int = channelBPower) {
         if (a < 0 || a > 2047) throw DataOverflowException()
         if (b < 0 || b > 2047) throw DataOverflowException()
-        powerSender(DGLabStruct.Power(a, b).power)
+        // 郊狼 v2 是反的
+        powerSender(DGLabStruct.Power(b, a).power)
     }
 
     fun stopAll() {
@@ -74,8 +67,9 @@ class DGLabBLEDevice(val waveSender: (a: DGLabStruct.WaveData, b: DGLabStruct.Wa
 
     fun callbackPower(power: ByteArray) {
         val sPower = DGLabStruct.Power(power)
-        channelAPower = sPower.a
-        channelBPower = sPower.b
+        // 郊狼 v2 是反的
+        channelAPower = sPower.b
+        channelBPower = sPower.a
         powerCallback(sPower.a, sPower.b)
     }
 }
