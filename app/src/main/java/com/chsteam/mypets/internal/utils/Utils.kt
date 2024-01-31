@@ -3,6 +3,7 @@ package com.chsteam.mypets.internal.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import com.chsteam.mypets.api.config.quest.QuestPackage
 import java.io.ByteArrayOutputStream
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -21,6 +22,14 @@ fun split(string: String): Array<String> {
         }
     }
     return list.toTypedArray()
+}
+
+fun addPackage(pack: QuestPackage, string: String): String {
+    return if (string.contains(".")) {
+        string
+    } else {
+        pack.packName + "." + string
+    }
 }
 
 @OptIn(ExperimentalEncodingApi::class)

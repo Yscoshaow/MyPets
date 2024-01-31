@@ -7,8 +7,9 @@ import androidx.compose.runtime.Composable
 import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.internal.compatibility.Device
 import com.chsteam.mypets.internal.compatibility.Devices
+import com.clj.fastble.data.BleDevice
 
-class DungeonLabV3(context: Context, viewModel: BluetoothViewModel, device: BluetoothDevice) : Device(context, viewModel, device) {
+class DungeonLabV3(context: Context, viewModel: BluetoothViewModel, bleDevice: BleDevice) : Device(context, viewModel, bleDevice) {
 
     override val type: Devices
         get() = Devices.DUNGEON_LAB_V3

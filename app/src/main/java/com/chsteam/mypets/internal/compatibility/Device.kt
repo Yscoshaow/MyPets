@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
+import com.clj.fastble.data.BleDevice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,7 +15,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-abstract class Device(val context: Context, val viewModel: BluetoothViewModel, val device: BluetoothDevice) {
+abstract class Device(val context: Context, val viewModel: BluetoothViewModel, val bleDevice: BleDevice) {
 
     abstract val type : Devices
     abstract val tickRate: Int

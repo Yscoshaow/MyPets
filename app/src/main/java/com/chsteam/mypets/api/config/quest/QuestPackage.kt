@@ -1,4 +1,4 @@
 package com.chsteam.mypets.api.config.quest
 
-class QuestPackage {
+class QuestPackage(val packName: String) {
 }

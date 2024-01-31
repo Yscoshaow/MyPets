@@ -131,8 +131,6 @@ class HomePage : Page {
     fun CurrentTask() {
         LazyColumn {
             item {
-                SelfObjective(Instruction(QuestPackage(), "", "")).TaskCard()
-                ShockObjective(Instruction(QuestPackage(), "", "")).TaskCard()
             }
         }
     }

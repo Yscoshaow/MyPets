@@ -7,13 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.room.Room
 import com.chsteam.mypets.internal.bluetooth.PetsBluetooth
-import com.chsteam.mypets.internal.database.MyPetsDatabase
 import com.chsteam.mypets.pages.PageManager
 import com.chsteam.mypets.ui.theme.MyPetsTheme
-import com.sscl.bluetoothlowenergylibrary.BleManager
-import java.io.BufferedReader
+import com.clj.fastble.BleManager
 
 class MainActivity : ComponentActivity() {
 
@@ -32,7 +29,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         petsBluetooth.enableBluetooth(this)
-        BleManager.initialize(this)
+        BleManager.getInstance().init(application)
         setContent {
             MyPetsTheme {
                 Surface(

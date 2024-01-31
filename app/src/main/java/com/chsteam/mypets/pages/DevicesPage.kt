@@ -122,7 +122,7 @@ class DevicesPage : Page {
     @Composable
     fun AddDeviceDialog(viewModel: BluetoothViewModel, scope: CoroutineScope, show: MutableState<Boolean>, onDismiss: () -> Unit) {
         val availabilityDevice = viewModel.availabilityDevice.value
-        val devices = viewModel.bluetoothDevices.value.values
+        val devices = viewModel.bluetoothDevices.value
         val context = LocalContext.current
         var selectedOption by remember { mutableStateOf(Devices.DUNGEON_LAB_V2) }
         var selectedMca by remember { mutableStateOf("") }
@@ -203,7 +203,7 @@ class DevicesPage : Page {
                         expanded = expandedMca,
                         onDismissRequest = { expandedMca = false }
                     ) {
-                        devices.filter { it.device.name == selectedOption.bluetoothName && it.device.address !in availabilityDevice.map { it.device.address } }.forEach {
+                        devices.filter { it.device.name == selectedOption.bluetoothName && it.device.address !in availabilityDevice.map { it.bleDevice.mac } }.forEach {
                             DropdownMenuItem(text = { Text(text = it.device.address) }, onClick = {
                                 selectedMca = it.device.address
                                 expandedMca = false
@@ -224,8 +224,8 @@ class DevicesPage : Page {
                     Button(
                         onClick = {
                             scope.launch(Dispatchers.IO) {
-                                viewModel.bluetoothDevices.value[selectedMca]?.let {
-                                    selectedOption.getDevice(context, viewModel, it.device)
+                                viewModel.bluetoothDevices.value.first { it.mac == selectedMca }.let {
+                                    selectedOption.getDevice(context, viewModel, it)
                                 }
                             }
                             show.value = false

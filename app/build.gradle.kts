@@ -67,7 +67,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.credentials:credentials:1.2.0")
-    implementation("com.gitee.sscl:ble-library-for-kotlin:0.0.2")
+    implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     implementation("io.insert-koin:koin-android:3.5.3")
