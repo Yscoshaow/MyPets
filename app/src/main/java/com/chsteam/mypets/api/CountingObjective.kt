@@ -1,4 +1,4 @@
 package com.chsteam.mypets.api
 
-abstract class CountingObjective : Objective() {
+abstract class CountingObjective  {
 }

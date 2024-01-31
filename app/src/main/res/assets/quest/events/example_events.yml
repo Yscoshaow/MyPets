@@ -1,0 +1,5 @@
+events:
+  shaowinvite: "conversation start yscos_shaow"
+  doEdge3Task: "objective add egde3Object"
+  doEdgingTask: "objective add egdingObject"
+  fristTaskDone: "tag add fristTaskDoneTag"

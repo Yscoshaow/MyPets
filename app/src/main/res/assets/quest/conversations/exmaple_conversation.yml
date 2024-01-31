@@ -1,0 +1,23 @@
+conversations:
+  yscos_shaow:
+    first: ""
+    NPC_options:
+      firstGreeting:
+        text: "你好呀, 欢迎来到这里呢, 你以后就是我的新的小猫猫了呢?"
+        pointer: "beCat,doNotThink"
+      force:
+        text: "不承认也没有用哦, 不怪的小猫可是有惩罚的! 去寸止3次!"
+        events: "doEdge3Task"
+      firstTask:
+        text: "那就让我们开始第一个任务吧, 小猫咪去尝试一下边缘自己十分钟吧~"
+        events: "ddEdgingTask"
+      firstTaskDone:
+        text: "小猫咪很努力呢, 休息一下吧"
+        conditions: "firstTaskDoneTag"
+    player_options:
+      beCat:
+        text: "好的呢, 主人"
+        pointer: ""
+      doNotThink:
+        text: "才，才不是呢"
+        pointer: "force"
