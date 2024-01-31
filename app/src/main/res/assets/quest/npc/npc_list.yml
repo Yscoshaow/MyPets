@@ -1,4 +1,7 @@
 npcs:
   yscos_shaow:
-    name: "Yscos Shaow"
+    name: "韶韶大人"
     avatar: "koyori.png"
+  yin:
+    name: "盈姐姐"
+    avatar: "saga.png"

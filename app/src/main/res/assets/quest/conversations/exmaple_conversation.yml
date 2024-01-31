@@ -1,4 +1,16 @@
 conversations:
+  yin:
+    first: "firstGreeting"
+    NPC_options:
+      firstGreeting:
+        conditions: "!postDone"
+        text: "你就是韶韶说的那个孩子吧？"
+      post:
+        text: "真可爱我们，一起来拍个照吧"
+    player_options:
+      answer:
+        text: "嗯嗯，就是我"
+        events: "postPicture"
   yscos_shaow:
     first: "firstTaskDone,firstGreeting"
     NPC_options:
@@ -12,8 +24,11 @@ conversations:
         text: "那就让我们开始第一个任务吧, 小猫咪去尝试一下边缘自己十分钟吧~"
         events: "ddEdgingTask"
       firstTaskDone:
-        text: "小猫咪很努力呢, 休息一下吧"
+        text: "小猫咪很努力呢, 今天要给小猫咪介绍一个新的人哦"
         conditions: "firstTaskDoneTag"
+      go:
+        text: "去看看就知道了!"
+        events: "startYinConv"
     player_options:
       beCat:
         text: "好的呢, 主人"
@@ -21,3 +36,6 @@ conversations:
       doNotThink:
         text: "才，才不是呢"
         pointer: "force"
+      who:
+        text: "谁呀"
+        pointer: "go"
