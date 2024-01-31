@@ -2,6 +2,8 @@ package com.chsteam.mypets.internal.database
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.room.Dao
@@ -10,6 +12,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
@@ -19,8 +24,19 @@ data class Npc(
     val name: String,
     val avatar: String
 ) {
+
+    var imageBitmap: MutableState<ImageBitmap?> = mutableStateOf(null)
+        private set
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            imageBitmap.value = getAvatarImageBitmap()
+        }
+    }
+
     @OptIn(ExperimentalEncodingApi::class)
-    fun getAvatarImageBitmap(): ImageBitmap {
+    private suspend fun getAvatarImageBitmap(): ImageBitmap {
+        // 使用协程处理图片加载
         return try {
             val bytes = Base64.decode(avatar)
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)

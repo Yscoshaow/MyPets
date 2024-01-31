@@ -1,11 +1,24 @@
 package com.chsteam.mypets.internal.database
 
 import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.dp
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
@@ -71,10 +84,33 @@ data class Post(
     fun PostCard() {
         val npcData by npc.collectAsState()
         val images by imageBitmaps.collectAsState()
-        if (npcData != null && images != null) {
-
-        } else {
-
+        if (npcData != null && images != null && npcData!!.imageBitmap.value != null) {
+            ElevatedCard {
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            bitmap = npcData!!.imageBitmap.value!!,
+                            contentDescription = "Avatar",
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = npcData!!.name)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        LazyColumn {
+                            item {
+                                images!!.forEach {
+                                    Image(
+                                        bitmap = it,
+                                        contentDescription = "Post Picture"
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
