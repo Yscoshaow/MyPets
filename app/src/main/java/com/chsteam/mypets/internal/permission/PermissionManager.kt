@@ -11,10 +11,10 @@ import androidx.core.content.PermissionChecker
 object PermissionManager {
 
     val BLUETOOTH_PERMISSION = arrayOf(
-        android.Manifest.permission.BLUETOOTH,
-        android.Manifest.permission.BLUETOOTH_ADMIN,
-        android.Manifest.permission.BLUETOOTH_CONNECT,
-        android.Manifest.permission.BLUETOOTH_SCAN
+        Manifest.permission.BLUETOOTH,
+        Manifest.permission.BLUETOOTH_ADMIN,
+        Manifest.permission.BLUETOOTH_CONNECT,
+        Manifest.permission.BLUETOOTH_SCAN
     )
 
     val LOCATION_PERMISSION = arrayOf(

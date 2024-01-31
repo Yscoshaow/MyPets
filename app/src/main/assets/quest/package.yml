@@ -1,0 +1,7 @@
+package:
+  name: example_package
+  # 被第一次加载的时候会执行这个event
+  init_events:
+    - "shaowinvite"
+  # 每次启动的时候会执行这个事件列表
+  bootstrap: []

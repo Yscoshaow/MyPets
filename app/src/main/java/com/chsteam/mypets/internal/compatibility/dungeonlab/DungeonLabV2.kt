@@ -29,9 +29,9 @@ import com.chsteam.mypets.internal.compatibility.Devices
 import com.sscl.bluetoothlowenergylibrary.BleManager
 import com.sscl.bluetoothlowenergylibrary.connetor.multi.BleMultiConnector
 import com.sscl.bluetoothlowenergylibrary.intefaces.OnBleConnectStateChangedListener
-import com.sscl.bluetoothlowenergylibrary.intefaces.OnCharacteristicNotifyDataListener
 import com.sscl.bluetoothlowenergylibrary.intefaces.OnCharacteristicReadDataListener
 import com.sscl.bluetoothlowenergylibrary.intefaces.OnCharacteristicWriteDataListener
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -39,6 +39,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.UUID
 
+@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("MissingPermission")
 class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, device: BluetoothDevice) : Device(context, viewModel, device) {
 
@@ -55,7 +56,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, device: Blue
         get() = Devices.DUNGEON_LAB_V2
 
     override val tickRate: Int
-        get() = 1000
+        get() = 10
 
     private val address = device.address
 
