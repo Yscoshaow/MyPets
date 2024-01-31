@@ -3,6 +3,7 @@ package com.chsteam.mypets.internal.compatibility.dungeonlab
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.content.Context
+import android.os.Handler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -222,8 +223,19 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
                 gatt: BluetoothGatt,
                 status: Int
             ) {
-
+                handleReconnect()
             }
         })
+    }
+
+   private fun handleReconnect() {
+        if (currentReconnectAttempts < maxReconnectAttempts) {
+            currentReconnectAttempts++
+            Handler().postDelayed({
+                context
+            }, 1000)
+        } else {
+            viewModel.availabilityDevice.value = viewModel.availabilityDevice.value - this
+        }
     }
 }

@@ -20,6 +20,9 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
     abstract val type : Devices
     abstract val tickRate: Int
 
+
+    val maxReconnectAttempts = 3
+    var currentReconnectAttempts = 0
     val battery = mutableStateOf(0)
 
     var locked = false
