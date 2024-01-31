@@ -84,14 +84,14 @@ data class Post(
     fun PostCard() {
         val npcData by npc.collectAsState()
         val images by imageBitmaps.collectAsState()
-        if (npcData != null && images != null && npcData!!.imageBitmap.value != null) {
+        if (npcData != null && images != null) {
             ElevatedCard {
                 Column {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
-                            bitmap = npcData!!.imageBitmap.value!!,
+                            bitmap = npcData!!.imageBitmap.value,
                             contentDescription = "Avatar",
                             modifier = Modifier.size(40.dp)
                         )

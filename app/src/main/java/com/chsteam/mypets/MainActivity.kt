@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
         INSTANCE = this
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         petsBluetooth.enableBluetooth(this)
@@ -44,9 +43,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    private fun loadJsonFromAssets() {
-        val assetManager = assets
     }
 }

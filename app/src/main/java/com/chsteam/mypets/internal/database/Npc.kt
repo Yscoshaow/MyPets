@@ -25,7 +25,7 @@ data class Npc(
     val avatar: String
 ) {
 
-    var imageBitmap: MutableState<ImageBitmap?> = mutableStateOf(null)
+    var imageBitmap: MutableState<ImageBitmap> = mutableStateOf(createBlankImageBitmap())
         private set
 
     init {

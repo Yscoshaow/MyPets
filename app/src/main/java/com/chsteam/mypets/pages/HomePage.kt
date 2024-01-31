@@ -114,7 +114,7 @@ class HomePage : Page {
     @Composable
     fun MessageItem(npc: Npc, message: Message, onClick: () -> Unit) {
         Row {
-            Image(npc.getAvatarImageBitmap(), contentDescription = npc.name)
+            Image(npc.imageBitmap.value, contentDescription = npc.name)
             Column {
                 Text(text = npc.name)
                 Text(text = message.message)
