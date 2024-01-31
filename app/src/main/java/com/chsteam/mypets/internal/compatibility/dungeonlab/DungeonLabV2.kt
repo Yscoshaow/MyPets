@@ -161,7 +161,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, device: Blue
         )
     }
 
-    class StateChangedListener(val dungeonLabV2: DungeonLabV2, val viewModel: BluetoothViewModel) : OnBleConnectStateChangedListener {
+    class StateChangedListener(private val dungeonLabV2: DungeonLabV2, private val viewModel: BluetoothViewModel) : OnBleConnectStateChangedListener {
         override fun autoDiscoverServicesFailed() {
 
         }
@@ -246,12 +246,20 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, device: Blue
 
     private fun compileStrengthToByteArray(channelA: Int = this.channelA.value, channelB: Int = this.channelB.value): ByteArray {
         val combined = (channelB shl 11) or channelA
-        return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(combined).array()
+        return byteArrayOf(
+            (combined shr 16).toByte(),
+            (combined shr 8).toByte(),
+            combined.toByte()
+        )
     }
 
     private fun compileWaveToByteArray(ax: Int, ay: Int, az: Int): ByteArray {
         val combined = (az shl 15) or (ay shl 5) or ax
-        return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(combined).array()
+        return byteArrayOf(
+            (combined shr 16).toByte(),
+            (combined shr 8).toByte(),
+            combined.toByte()
+        )
     }
 
     private fun compileAWaveToByteArray(): ByteArray {
