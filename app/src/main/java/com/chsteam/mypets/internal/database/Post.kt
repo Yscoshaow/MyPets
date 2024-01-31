@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
@@ -50,7 +51,9 @@ data class Post(
 
     private val npcDao: NpcDao by inject()
 
+    @Ignore
     private var npc: MutableStateFlow<Npc?> = MutableStateFlow(null)
+    @Ignore
     private var imageBitmaps: MutableStateFlow<List<ImageBitmap>> = MutableStateFlow(emptyList())
 
     init {
@@ -76,7 +79,7 @@ data class Post(
         }
     }
 
-    suspend fun getNPC() : Npc? {
+    private suspend fun getNPC() : Npc? {
         return npcDao.getNpcById(this.from)
     }
 

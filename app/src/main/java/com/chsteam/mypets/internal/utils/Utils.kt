@@ -1,7 +1,13 @@
 package com.chsteam.mypets.internal.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import java.io.ByteArrayOutputStream
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 
 fun split(string: String): Array<String> {
@@ -15,4 +21,15 @@ fun split(string: String): Array<String> {
         }
     }
     return list.toTypedArray()
+}
+
+@OptIn(ExperimentalEncodingApi::class)
+fun convertImageToBase64(context: Context, assetFileName: String): String {
+    val inputStream = context.assets.open(assetFileName)
+    val bitmap = BitmapFactory.decodeStream(inputStream)
+
+    val outputStream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+    val byteArray = outputStream.toByteArray()
+    return Base64.encode(byteArray)
 }

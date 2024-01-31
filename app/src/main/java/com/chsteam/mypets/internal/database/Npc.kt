@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.room.Dao
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
@@ -25,6 +26,7 @@ data class Npc(
     val avatar: String
 ) {
 
+    @Ignore
     var imageBitmap: MutableState<ImageBitmap> = mutableStateOf(createBlankImageBitmap())
         private set
 

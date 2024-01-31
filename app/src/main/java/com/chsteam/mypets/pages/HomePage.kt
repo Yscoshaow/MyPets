@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -51,8 +52,11 @@ import com.chsteam.mypets.internal.Instruction
 import com.chsteam.mypets.internal.database.ChatViewModel
 import com.chsteam.mypets.internal.database.Message
 import com.chsteam.mypets.internal.database.Npc
+import com.chsteam.mypets.internal.database.Post
 import com.chsteam.mypets.internal.objectives.SelfObjective
 import com.chsteam.mypets.internal.objectives.ShockObjective
+import com.chsteam.mypets.internal.utils.convertImageToBase64
+import java.util.Date
 
 class HomePage : Page {
 
@@ -135,9 +139,16 @@ class HomePage : Page {
 
     @Composable
     fun Share() {
+        val context = LocalContext.current
         LazyColumn {
             item {
-
+                Post(
+                    0,
+                    0,
+                    "这是韶的新猫猫呢!",
+                    listOf(convertImageToBase64(context, "quest/pictures/post1.png")),
+                    Date()
+                ).PostCard()
             }
         }
     }
