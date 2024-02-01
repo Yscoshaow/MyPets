@@ -49,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.chsteam.mypets.api.config.quest.QuestPackage
 import com.chsteam.mypets.internal.Instruction
+import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.internal.database.ChatViewModel
 import com.chsteam.mypets.internal.database.Message
 import com.chsteam.mypets.internal.database.Npc
@@ -56,9 +57,13 @@ import com.chsteam.mypets.internal.database.Post
 import com.chsteam.mypets.internal.objectives.SelfObjective
 import com.chsteam.mypets.internal.objectives.ShockObjective
 import com.chsteam.mypets.internal.utils.convertImageToBase64
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.Date
 
-class HomePage : Page {
+class HomePage : Page, KoinComponent {
+
+    private val viewModel: ChatViewModel by inject()
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
@@ -102,7 +107,6 @@ class HomePage : Page {
 
     @Composable
     fun ChattingList() {
-        val viewModel: ChatViewModel = viewModel()
         val latestMessages by viewModel.latestMessages.observeAsState(initial = emptyMap())
         LazyColumn {
             item {
@@ -140,13 +144,6 @@ class HomePage : Page {
         val context = LocalContext.current
         LazyColumn {
             item {
-                Post(
-                    0,
-                    0,
-                    "这是韶的新猫猫呢!",
-                    listOf(convertImageToBase64(context, "quest/pictures/post1.png")),
-                    Date()
-                ).PostCard()
             }
         }
     }
