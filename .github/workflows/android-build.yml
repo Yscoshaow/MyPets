@@ -16,7 +16,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, '[build]')"
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 17
@@ -29,6 +28,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Upload Artifact
+      if: "contains(github.event.head_commit.message, '[publish]')"
       uses: actions/upload-artifact@v2
       with:
         name: Android APK
