@@ -68,7 +68,7 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
     abstract fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int)
 
     @Composable
-    fun CardClickedShow() {
+    open fun CardClickedShow() {
         // override it and show a dialog
     }
 

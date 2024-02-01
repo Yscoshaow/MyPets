@@ -157,7 +157,6 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     }
 
     override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
-        super.onConnectSuccess(bleDevice, gatt, status)
         BleManager.getInstance().notify(
             bleDevice,
             BATTERY,

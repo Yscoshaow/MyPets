@@ -1,5 +1,6 @@
 package com.chsteam.mypets.internal.compatibility.dungeonlab
 
+import android.bluetooth.BluetoothGatt
 import android.content.Context
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
@@ -25,5 +26,9 @@ class DungeonLabV3(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         Card {
 
         }
+    }
+
+    override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
+
     }
 }
