@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chsteam.mypets.api.Objective
 import com.chsteam.mypets.internal.Instruction
 import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
+import com.chsteam.mypets.internal.compatibility.Device
 import com.chsteam.mypets.internal.compatibility.Devices
 
 class ShockObjective(instruction: Instruction) : Objective(instruction) {
@@ -42,7 +43,13 @@ class ShockObjective(instruction: Instruction) : Objective(instruction) {
     override val typeName: String
         get() = "电击任务"
 
-    private val text = "你要自己在大腿和小腹上贴上点击贴片，持续电10分钟哦。如果你准备好了的话，就开始吧"
+    private val text: String
+
+    private var deivece: Device? = null
+
+    init {
+        text = instruction.next() ?: ""
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -92,6 +99,7 @@ class ShockObjective(instruction: Instruction) : Objective(instruction) {
                             DropdownMenuItem(text = { Text(text = device.deviceName.value) }, onClick = {
                                 selectedOption = device.deviceName.value
                                 expanded = false
+                                this@ShockObjective.deivece = device
                             })
                         }
 
@@ -101,7 +109,9 @@ class ShockObjective(instruction: Instruction) : Objective(instruction) {
                 Row {
 
                     Spacer(Modifier.weight(1f))
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        deivece?.locked
+                    }) {
                         Icon(Icons.Outlined.Start, contentDescription = "开始")
                     }
                 }

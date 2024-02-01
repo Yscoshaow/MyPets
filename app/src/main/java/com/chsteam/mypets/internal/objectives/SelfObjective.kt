@@ -27,7 +27,11 @@ class SelfObjective(instruction: Instruction) : Objective(instruction) {
     override val typeName: String
         get() = "自监督任务"
 
-    private val text = "根据韶韶的任务要求, 你需要完成3次的寸止, 你会乖乖完成的对吧"
+    private val text: String
+
+    init {
+        text = instruction.next() ?: ""
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
