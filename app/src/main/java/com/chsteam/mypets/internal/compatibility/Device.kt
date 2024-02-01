@@ -44,7 +44,7 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
 
     abstract val tickRate: Int
 
-    var deviceName: String = context.getSharedPreferences("MyPetsDeviceName", Context.MODE_PRIVATE).getString(bleDevice.mac, type.i18Name) ?: type.i18Name
+    var deviceName = mutableStateOf(context.getSharedPreferences("MyPetsDeviceName", Context.MODE_PRIVATE).getString(bleDevice.mac, type.i18Name) ?: type.i18Name)
 
     val battery = mutableStateOf(0)
 
@@ -107,6 +107,7 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
     }
 
     private fun changeDeviceName(string: String) {
+        deviceName.value = string
         context.getSharedPreferences("MyPetsDeviceName", Context.MODE_PRIVATE)
             .edit().putString(this.bleDevice.mac, string).apply()
     }
@@ -118,7 +119,7 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
         var showDialog by remember { mutableStateOf(false) }
         var showCardClick by remember { mutableStateOf(false) }
 
-        var name by remember { mutableStateOf(deviceName) }
+        var name by remember { mutableStateOf(deviceName.value) }
 
         Card(
             modifier = Modifier
@@ -136,7 +137,7 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = deviceName,
+                        text = deviceName.value,
                         style = MaterialTheme.typography.displaySmall,
                         modifier = Modifier.clickable { showDialog = true }
                     )

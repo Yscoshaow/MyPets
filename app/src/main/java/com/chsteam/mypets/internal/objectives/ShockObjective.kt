@@ -89,8 +89,8 @@ class ShockObjective(instruction: Instruction) : Objective(instruction) {
                     ) {
 
                         viewModel.availabilityDevice.value.filter { it.type in availableDevices }.forEach { device ->
-                            DropdownMenuItem(text = { Text(text = device.deviceName) }, onClick = {
-                                selectedOption = device.deviceName
+                            DropdownMenuItem(text = { Text(text = device.deviceName.value) }, onClick = {
+                                selectedOption = device.deviceName.value
                                 expanded = false
                             })
                         }
