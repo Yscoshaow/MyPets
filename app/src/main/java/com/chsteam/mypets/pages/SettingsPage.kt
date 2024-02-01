@@ -126,7 +126,21 @@ class SettingsPage : Page {
             }
             Divider()
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
-                var checked by remember { mutableStateOf(false) }
+                var checked by remember { mutableStateOf(PermissionManager.hasPermissions(PermissionManager.CAMERA_PERMISSION, context)) }
+
+                val launcher =
+                    rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                        if (permissions.all { it.value }) {
+                            checked = true
+                        } else {
+                            checked = false
+                            Toast.makeText(
+                                context,
+                                "We need Camera to take photo for post",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
 
                 Text(text = "相机", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp).weight(1f))
                 Spacer(modifier = Modifier.width(16.dp))
@@ -139,6 +153,7 @@ class SettingsPage : Page {
                 Switch(
                     checked = checked,
                     onCheckedChange = {
+                        PermissionManager.requestPermissions(PermissionManager.CAMERA_PERMISSION, context, launcher)
                         checked = it
                     },
                     thumbContent = if (checked) {

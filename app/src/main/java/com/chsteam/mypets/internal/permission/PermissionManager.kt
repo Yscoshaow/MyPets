@@ -22,10 +22,9 @@ object PermissionManager {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
-    val READ_EXTERNAL_STORAGE = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE
+    val CAMERA_PERMISSION = arrayOf(
+        Manifest.permission.CAMERA
     )
-
 
     fun hasPermissions(permissions: Array<String>, context: Context): Boolean {
         return permissions.all {

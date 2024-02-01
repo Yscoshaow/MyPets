@@ -12,6 +12,7 @@ conversations:
     player_options:
       answer:
         text: "嗯嗯，就是我"
+        pointer: "post"
   yscos_shaow:
     first: "firstTaskDone,firstGreeting"
     NPC_options:

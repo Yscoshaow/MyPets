@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.chsteam.mypets.internal.bluetooth.PetsBluetooth
+import com.chsteam.mypets.internal.loader.QuestLoader
 import com.chsteam.mypets.pages.PageManager
 import com.chsteam.mypets.ui.theme.MyPetsTheme
 import com.clj.fastble.BleManager
@@ -42,6 +43,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        QuestLoader.traverseAssets(this.applicationContext)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

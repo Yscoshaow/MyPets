@@ -4,10 +4,19 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import java.io.IOException
 
 object QuestLoader {
+
+    private val JACKSON_YAML = ObjectMapper(YAMLFactory())
+
+    private fun processYamlData(data: Map<String, Any>) {
+
+    }
 
     fun openDirectoryPicker(activity: Activity, requestCode: Int) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -19,8 +28,11 @@ object QuestLoader {
         documentFile?.let { directory ->
             for (file in directory.listFiles()) {
                 if (file.isDirectory) {
-                    traverseDirectory(context, file.uri) // 递归遍历子目录
+                    traverseDirectory(context, file.uri)
                 } else if (file.isFile) {
+                    if((file.name ?: "" ).endsWith(".yml")) {
+                        processYmlFileWithJackson(context, file.uri)
+                    }
                 }
             }
         }
@@ -28,17 +40,31 @@ object QuestLoader {
 
     fun traverseAssets(context: Context, path: String = "") {
         try {
-            val assets = context.assets.list(path) ?: arrayOf() // 获取当前路径下的所有文件和文件夹
+            val assets = context.assets.list(path) ?: arrayOf()
             if (assets.isEmpty()) {
-                // 如果是文件或空目录，可以在这里处理文件
+                if(path.endsWith(".yml")) {
+                    val inputStream = context.assets.open(path)
+                    val data: Map<String, Any> = JACKSON_YAML.readValue(inputStream, Map::class.java) as Map<String, Any>
+                    processYamlData(data)
+                }
             } else {
                 for (asset in assets) {
                     val assetPath = if (path.isEmpty()) asset else "$path/$asset"
-                    traverseAssets(context, assetPath) // 递归遍历子目录或文件
+                    traverseAssets(context, assetPath)
                 }
             }
-        } catch (e: IOException) {
-            // 处理异常，可能是无法读取目录
+        } catch (_: IOException) {
+        }
+    }
+
+    fun processYmlFileWithJackson(context: Context, uri: Uri) {
+        try {
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val data: Map<String, Any> = JACKSON_YAML.readValue(inputStream, Map::class.java) as Map<String, Any>
+                processYamlData(data)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

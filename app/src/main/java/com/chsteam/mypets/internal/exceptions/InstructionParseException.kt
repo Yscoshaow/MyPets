@@ -12,7 +12,7 @@ class InstructionParseException : Exception {
      *
      * @param message the exceptions message.
      */
-    constructor(message: String?) : super(message)
+    constructor(message: String) : super(message)
 
     /**
      * [Exception.Exception]
@@ -20,14 +20,14 @@ class InstructionParseException : Exception {
      * @param message the exceptions message.
      * @param cause   the Throwable that caused this exception.
      */
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    constructor(message: String, cause: Throwable) : super(message, cause)
 
     /**
      * [Exception.Exception]
      *
      * @param cause the exceptions cause.
      */
-    constructor(cause: Throwable?) : super(cause)
+    constructor(cause: Throwable) : super(cause)
 
     companion object {
         private const val serialVersionUID = 7487088647464022627L

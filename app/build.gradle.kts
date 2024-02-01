@@ -53,6 +53,7 @@ android {
 dependencies {
     implementation("androidx.documentfile:documentfile:1.0.1")
     val room_version = "2.6.1"
+    var carmera_version = "1.3.1"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -63,14 +64,17 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
 
+    implementation("androidx.camera:camera-camera2:$carmera_version")
+    implementation("androidx.camera:camera-lifecycle:$carmera_version")
+    implementation("androidx.camera:camera-view:$carmera_version")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.0")
-    implementation("com.google.accompanist:accompanist-pager:0.32.0")
-    implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.credentials:credentials:1.2.0")
-    implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
+    implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+    implementation("com.google.accompanist:accompanist-pager:0.32.0")
+    implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("com.fasterxml.jackson.core:jackson-core:2.16.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
