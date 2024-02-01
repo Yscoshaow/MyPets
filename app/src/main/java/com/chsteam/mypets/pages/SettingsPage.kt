@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -77,7 +79,7 @@ class SettingsPage : Page {
     fun SettingsList(innerPadding: PaddingValues) {
         val context = LocalContext.current
         Column(modifier = Modifier.padding(innerPadding)) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.09f)) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
                 var checked by remember { mutableStateOf(PermissionManager.hasPermissions(PermissionManager.BLUETOOTH_PERMISSION, context)) }
 
                 val launcher =
@@ -94,14 +96,14 @@ class SettingsPage : Page {
                         }
                     }
 
-                Text(text = "蓝牙", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp))
-                Spacer(modifier = Modifier.fillMaxWidth(0.7f))
+                Text(text = "蓝牙", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp).weight(1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Divider(modifier = Modifier
                     .fillMaxHeight()
                     .width(1.dp)
                     .padding(vertical = 8.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxWidth(0.1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Switch(
                     checked = checked,
                     onCheckedChange = {
@@ -120,19 +122,20 @@ class SettingsPage : Page {
                         null
                     }
                 )
+                Spacer(modifier = Modifier.padding(end = 36.dp))
             }
             Divider()
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.09f)) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
                 var checked by remember { mutableStateOf(false) }
 
-                Text(text = "相机", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp))
-                Spacer(modifier = Modifier.fillMaxWidth(0.7f))
+                Text(text = "相机", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp).weight(1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Divider(modifier = Modifier
                     .fillMaxHeight()
                     .width(1.dp)
                     .padding(vertical = 8.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxWidth(0.1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Switch(
                     checked = checked,
                     onCheckedChange = {
@@ -150,9 +153,10 @@ class SettingsPage : Page {
                         null
                     }
                 )
+                Spacer(modifier = Modifier.padding(end = 36.dp))
             }
             Divider()
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.09f)) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
                 var checked by remember { mutableStateOf(PermissionManager.hasPermissions(PermissionManager.LOCATION_PERMISSION, context)) }
 
                 val launcher =
@@ -169,14 +173,14 @@ class SettingsPage : Page {
                         }
                     }
 
-                Text(text = "位置", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp))
-                Spacer(modifier = Modifier.fillMaxWidth(0.7f))
+                Text(text = "位置", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp).weight(1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Divider(modifier = Modifier
                     .fillMaxHeight()
                     .width(1.dp)
                     .padding(vertical = 8.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxWidth(0.1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Switch(
                     checked = checked,
                     onCheckedChange = {
@@ -195,9 +199,10 @@ class SettingsPage : Page {
                         null
                     }
                 )
+                Spacer(modifier = Modifier.padding(end = 36.dp))
             }
             Divider()
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.09f)) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
                 val uri = getUriFromSharedPreferences(context)
 
                 var checked by remember { mutableStateOf(hasPersistableUriPermission(context, uri)) }
@@ -212,14 +217,14 @@ class SettingsPage : Page {
                     }
                 }
 
-                Text(text = "文件", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp))
-                Spacer(modifier = Modifier.fillMaxWidth(0.7f))
+                Text(text = "文件", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp).weight(1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Divider(modifier = Modifier
                     .fillMaxHeight()
                     .width(1.dp)
                     .padding(vertical = 8.dp)
                 )
-                Spacer(modifier = Modifier.fillMaxWidth(0.1f))
+                Spacer(modifier = Modifier.width(16.dp))
                 Switch(
                     checked = checked,
                     onCheckedChange = {
@@ -237,8 +242,54 @@ class SettingsPage : Page {
                         null
                     }
                 )
+                Spacer(modifier = Modifier.padding(end = 36.dp))
             }
             Divider()
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
+                var checked by remember { mutableStateOf(loadDefaultQuest(context)) }
+
+                Text(text = "默认任务", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp).weight(1f))
+                Spacer(modifier = Modifier.width(16.dp))
+                Divider(modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+                    .padding(vertical = 8.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Switch(
+                    checked = checked,
+                    onCheckedChange = {
+                        checked = it
+                        saveDefaultQuest(context, it)
+                    },
+                    thumbContent = if (checked) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        }
+                    } else {
+                        null
+                    }
+                )
+                Spacer(modifier = Modifier.padding(end = 36.dp))
+            }
+            Divider()
+        }
+    }
+
+    private fun loadDefaultQuest(context: Context) : Boolean {
+        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("default_quest", false)
+    }
+
+    private fun saveDefaultQuest(context: Context, isLoadDefaultQuest: Boolean) {
+        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putBoolean("default_quest", isLoadDefaultQuest)
+            apply()
         }
     }
 
