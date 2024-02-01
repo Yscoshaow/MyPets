@@ -67,14 +67,18 @@ import com.chsteam.mypets.internal.compatibility.dungeonlab.DungeonLabV2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class DevicesPage : Page {
+
+class DevicesPage : Page, KoinComponent {
+
+    private val viewModel: BluetoothViewModel by inject()
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Main(navController: NavController) {
 
-        val viewModel: BluetoothViewModel = viewModel()
         val availabilityDevice = viewModel.availabilityDevice.value
         val showDialog = remember { mutableStateOf(false) }
 
