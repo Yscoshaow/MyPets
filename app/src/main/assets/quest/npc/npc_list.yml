@@ -2,6 +2,10 @@ npcs:
   yscos_shaow:
     name: "韶韶大人"
     avatar: "koyori.png"
+    description:
+      - "你的女主人"
   yin:
     name: "盈姐姐"
     avatar: "saga.png"
+    description:
+      - "韶韶的绒布球"

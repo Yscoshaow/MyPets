@@ -1,5 +1,7 @@
 package com.chsteam.mypets
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -39,6 +41,14 @@ class MainActivity : ComponentActivity() {
                     PageManager.Main()
                 }
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            val directoryUri = data?.data
+            // 使用该URI遍历文件夹
         }
     }
 }

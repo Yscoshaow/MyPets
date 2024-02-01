@@ -1,5 +1,8 @@
 package com.chsteam.mypets.pages
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -194,7 +197,70 @@ class SettingsPage : Page {
                 )
             }
             Divider()
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight(0.09f)) {
+                val uri = getUriFromSharedPreferences(context)
+
+                var checked by remember { mutableStateOf(hasPersistableUriPermission(context, uri)) }
+                var selectedDirectory by remember { mutableStateOf(uri) }
+
+                val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { uri ->
+                    if (uri != null) {
+                        context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                        selectedDirectory = uri
+                        saveUriToSharedPreferences(context, uri)
+                        checked = true
+                    }
+                }
+
+                Text(text = "文件", fontSize = TextUnit(23f, TextUnitType.Sp), modifier = Modifier.padding(start = 36.dp))
+                Spacer(modifier = Modifier.fillMaxWidth(0.7f))
+                Divider(modifier = Modifier
+                    .fillMaxHeight()
+                    .width(1.dp)
+                    .padding(vertical = 8.dp)
+                )
+                Spacer(modifier = Modifier.fillMaxWidth(0.1f))
+                Switch(
+                    checked = checked,
+                    onCheckedChange = {
+                        launcher.launch(null)
+                    },
+                    thumbContent = if (checked) {
+                        {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = null,
+                                modifier = Modifier.size(SwitchDefaults.IconSize),
+                            )
+                        }
+                    } else {
+                        null
+                    }
+                )
+            }
+            Divider()
         }
     }
 
+    private fun saveUriToSharedPreferences(context: Context, uri: Uri) {
+        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("selected_directory_uri", uri.toString())
+            apply()
+        }
+    }
+
+    private fun getUriFromSharedPreferences(context: Context): Uri? {
+        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
+        val uriString = sharedPreferences.getString("selected_directory_uri", null)
+        return uriString?.let { Uri.parse(it) }
+    }
+
+    private fun hasPersistableUriPermission(context: Context, uriToCheck: Uri?): Boolean {
+        if(uriToCheck == null) return false
+        val persistedUriPermissions = context.contentResolver.persistedUriPermissions
+        return persistedUriPermissions.any {
+            it.uri == uriToCheck && it.isReadPermission && it.isWritePermission
+        }
+    }
 }

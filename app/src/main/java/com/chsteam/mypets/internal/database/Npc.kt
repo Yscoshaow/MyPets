@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.Ignore
+import androidx.room.Index
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
@@ -19,12 +20,13 @@ import kotlinx.coroutines.launch
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-@Entity
+@Entity(indices = [Index(value = ["pack", "name"], unique = true)])
 data class Npc(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val pack: String,
     val name: String,
-    val avatar: String
+    val avatar: String,
+    val description: List<String>
 ) {
 
     @Ignore
@@ -60,7 +62,7 @@ data class Npc(
 interface NpcDao {
 
     // 插入一个Npc对象到数据库中
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNpc(npc: Npc): Long
 
     // 根据名字查询Npc的avatar
