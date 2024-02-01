@@ -61,10 +61,6 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
 
     val device = DGLabBLEDevice(::waveSender, ::powerSender, ::powerCallback, ::batteryCallback)
 
-    init {
-        bleConnect()
-    }
-
     override fun tick() {
         device.callAutoWaveTimer()
     }
@@ -100,6 +96,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         Slider(
             value = strength,
             onValueChange = { fl ->
+                if(locked) return@Slider
                 if(channelName.contains("A")) {
                     channelA.value = fl.toInt()
                     device.channelAPower = fl.toInt()
@@ -159,69 +156,38 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         battery.value = level
     }
 
-    private fun bleConnect(reconnect: Boolean = false) {
-        BleManager.getInstance().connect(bleDevice, object : BleGattCallback() {
-            override fun onStartConnect() {
-
-            }
-            override fun onConnectFail(bleDevice: BleDevice, exception: BleException) {
-
-            }
-            override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
-                if(!reconnect) {
-                    viewModel.availabilityDevice.value = viewModel.availabilityDevice.value + this@DungeonLabV2
+    override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
+        super.onConnectSuccess(bleDevice, gatt, status)
+        BleManager.getInstance().notify(
+            bleDevice,
+            BATTERY,
+            BATTERY_NOTIFY,
+            object : BleNotifyCallback() {
+                override fun onNotifySuccess() {}
+                override fun onNotifyFailure(exception: BleException) {}
+                override fun onCharacteristicChanged(data: ByteArray) {
+                    device.callbackBattery(data)
                 }
-                BleManager.getInstance().notify(
-                    bleDevice,
-                    BATTERY,
-                    BATTERY_NOTIFY,
-                    object : BleNotifyCallback() {
-                        override fun onNotifySuccess() {}
-                        override fun onNotifyFailure(exception: BleException) {}
-                        override fun onCharacteristicChanged(data: ByteArray) {
-                            device.callbackBattery(data)
-                        }
-                    })
-                BleManager.getInstance().read(
-                    bleDevice,
-                    BATTERY,
-                    BATTERY_NOTIFY,
-                    object : BleReadCallback() {
-                        override fun onReadSuccess(data: ByteArray) {
-                            device.callbackBattery(data)
-                        }
-                        override fun onReadFailure(exception: BleException) {}
-                    })
-                BleManager.getInstance().read(
-                    bleDevice,
-                    FUNCTION,
-                    STRENGTH,
-                    object : BleReadCallback() {
-                        override fun onReadSuccess(data: ByteArray) {
-                            device.callbackPower(data)
-                        }
-                        override fun onReadFailure(exception: BleException) {}
-                    })
-            }
-            override fun onDisConnected(
-                isActiveDisConnected: Boolean,
-                bleDevice: BleDevice,
-                gatt: BluetoothGatt,
-                status: Int
-            ) {
-                handleReconnect()
-            }
-        })
-    }
-
-   private fun handleReconnect() {
-        if (currentReconnectAttempts < maxReconnectAttempts) {
-            currentReconnectAttempts++
-            Handler().postDelayed({
-                bleConnect(true)
-            }, 1000)
-        } else {
-            viewModel.availabilityDevice.value = viewModel.availabilityDevice.value - this
-        }
+            })
+        BleManager.getInstance().read(
+            bleDevice,
+            BATTERY,
+            BATTERY_NOTIFY,
+            object : BleReadCallback() {
+                override fun onReadSuccess(data: ByteArray) {
+                    device.callbackBattery(data)
+                }
+                override fun onReadFailure(exception: BleException) {}
+            })
+        BleManager.getInstance().read(
+            bleDevice,
+            FUNCTION,
+            STRENGTH,
+            object : BleReadCallback() {
+                override fun onReadSuccess(data: ByteArray) {
+                    device.callbackPower(data)
+                }
+                override fun onReadFailure(exception: BleException) {}
+            })
     }
 }
