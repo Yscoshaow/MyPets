@@ -1,25 +1,31 @@
 package com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab
 
-class DGLabBLEDevice(val waveSender: (a: DGLabStruct.WaveData, b: DGLabStruct.WaveData) -> Unit, val powerSender: (power: ByteArray) -> Unit, val powerCallback: (a: Int, b: Int) -> Unit, val batteryCallback: (level: Int) -> Unit) {
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.AutoWaveData
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.AutoWaveState
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.BatteryLevel
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.Power
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.WaveData
+
+class DGLabBLEDevice(val waveSender: (a: WaveData, b: WaveData) -> Unit, val powerSender: (power: ByteArray) -> Unit, val powerCallback: (a: Int, b: Int) -> Unit, val batteryCallback: (level: Int) -> Unit) {
 
     var channelAPower = 0
     var channelBPower = 0
 
-    private lateinit var channelAWave: Waves.AutoWaveState
-    private lateinit var channelBWave: Waves.AutoWaveState
+    private lateinit var channelAWave: AutoWaveState
+    private lateinit var channelBWave: AutoWaveState
 
     init {
-        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_A, Waves.AutoWave.breath())
-        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_B, Waves.AutoWave.breath())
+        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_A, AutoWaveData.AutoWaveType.BREATH.data)
+        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_B, AutoWaveData.AutoWaveType.BREATH.data)
     }
 
-    fun selectAutoWave(channel: OpenDGLab.DGChannel, wave: Waves.AutoWaveData) {
+    fun selectAutoWave(channel: OpenDGLab.DGChannel, wave: AutoWaveData) {
         when (channel) {
             OpenDGLab.DGChannel.CHANNEL_A -> {
-                channelAWave = Waves.AutoWaveState(wave=wave, wave.sections[0].a,wave.sections[0].b,wave.sections[0].c,wave.sections[0].pc,wave.sections[0].j, wave.sections[0].points, 0)
+                channelAWave = AutoWaveState(wave=wave, wave.sections[0].a,wave.sections[0].b,wave.sections[0].c,wave.sections[0].pc,wave.sections[0].j, wave.sections[0].points, 0)
             }
             OpenDGLab.DGChannel.CHANNEL_B -> {
-                channelBWave = Waves.AutoWaveState(wave=wave, wave.sections[0].a,wave.sections[0].b,wave.sections[0].c,wave.sections[0].pc,wave.sections[0].j, wave.sections[0].points, 0)
+                channelBWave = AutoWaveState(wave=wave, wave.sections[0].a,wave.sections[0].b,wave.sections[0].c,wave.sections[0].pc,wave.sections[0].j, wave.sections[0].points, 0)
             }
         }
     }
@@ -28,24 +34,24 @@ class DGLabBLEDevice(val waveSender: (a: DGLabStruct.WaveData, b: DGLabStruct.Wa
         if (a < 0 || a > 2047) throw DataOverflowException()
         if (b < 0 || b > 2047) throw DataOverflowException()
         // 郊狼 v2 是反的
-        powerSender(DGLabStruct.Power(b, a).power)
+        powerSender(Power(b, a).power)
     }
 
     fun stopAll() {
-        powerSender(DGLabStruct.Power(0, 0).power)
-        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_A, Waves.AutoWave.off())
-        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_B, Waves.AutoWave.off())
+        powerSender(Power(0, 0).power)
+        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_A, AutoWaveData.AutoWaveType.OFF.data)
+        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_B, AutoWaveData.AutoWaveType.OFF.data)
     }
 
     fun stop(channel: OpenDGLab.DGChannel) {
         when(channel) {
             OpenDGLab.DGChannel.CHANNEL_A -> {
-                powerSender(DGLabStruct.Power(0, channelBPower).power)
-                selectAutoWave(OpenDGLab.DGChannel.CHANNEL_A, Waves.AutoWave.off())
+                powerSender(Power(0, channelBPower).power)
+                selectAutoWave(OpenDGLab.DGChannel.CHANNEL_A, AutoWaveData.AutoWaveType.OFF.data)
             }
             OpenDGLab.DGChannel.CHANNEL_B -> {
-                powerSender(DGLabStruct.Power(channelAPower, 0).power)
-                selectAutoWave(OpenDGLab.DGChannel.CHANNEL_B, Waves.AutoWave.off())
+                powerSender(Power(channelAPower, 0).power)
+                selectAutoWave(OpenDGLab.DGChannel.CHANNEL_B, AutoWaveData.AutoWaveType.OFF.data)
             }
         }
     }
@@ -62,11 +68,11 @@ class DGLabBLEDevice(val waveSender: (a: DGLabStruct.WaveData, b: DGLabStruct.Wa
     }
 
     fun callbackBattery(level: ByteArray) {
-        batteryCallback(DGLabStruct.BatteryLevel(level).getLevel())
+        batteryCallback(BatteryLevel(level).getLevel())
     }
 
     fun callbackPower(power: ByteArray) {
-        val sPower = DGLabStruct.Power(power)
+        val sPower = Power(power)
         // 郊狼 v2 是反的
         channelAPower = sPower.b
         channelBPower = sPower.a

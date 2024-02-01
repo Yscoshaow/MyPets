@@ -1,12 +1,15 @@
 package com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab
 
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.AutoWaveState
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.TouchWaveData
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.WaveData
 import kotlin.math.*
 
 object OpenDGLab {
     enum class DGChannel {
         CHANNEL_A, CHANNEL_B
     }
-    fun calcXYZ(frequency: Double, z: Int): DGLabStruct.WaveData {
+    fun calcXYZ(frequency: Double, z: Int): WaveData {
         if (frequency < 10 || frequency > 1000) throw DataOverflowException()
         if (frequency < 0) throw DataOverflowException()
         if (z > 31 || z < 0) throw DataOverflowException()
@@ -14,11 +17,11 @@ object OpenDGLab {
         var y = frequency - x
         if (x > 31) x = 31.0
         if (y > 1023) y = 1023.0
-        return DGLabStruct.WaveData(x = x.roundToInt(), y = y.roundToInt(), z = z)
+        return WaveData(x = x.roundToInt(), y = y.roundToInt(), z = z)
     }
 
-    fun calcTouchWave(x: Double, y: Double) : DGLabStruct.WaveData {
-        if (x > 1.0f || x < 0.0f || y > 1.0f || y < 0.0f) return DGLabStruct.WaveData(0,0,0)
+    fun calcTouchWave(x: Double, y: Double) : WaveData {
+        if (x > 1.0f || x < 0.0f || y > 1.0f || y < 0.0f) return WaveData(0,0,0)
         var pow = 10.0.pow(y * 2.5 + 0.5)
         if (pow < 10.0) {
             pow = 10.0
@@ -30,24 +33,24 @@ object OpenDGLab {
         }
         val i2 = (pow - pow3.toDouble()).toInt()
         val i3 = pow2.toInt()
-        return DGLabStruct.WaveData(x = pow3, y = i2, z = i3)
+        return WaveData(x = pow3, y = i2, z = i3)
     }
 
-    fun calcTouchWave(timeSeq: Int, wave: Array<Waves.TouchWaveData>) : DGLabStruct.WaveData {
+    fun calcTouchWave(timeSeq: Int, wave: Array<TouchWaveData>) : WaveData {
         val time = timeSeq % wave.size
         val ax: Int = wave[time].ax
         val ay: Int = wave[time].ay
         val az: Int = wave[time].az
-        return DGLabStruct.WaveData(x = ax, y = ay, z = az)
+        return WaveData(x = ax, y = ay, z = az)
     }
 
-    fun calcAutoWave(state: Waves.AutoWaveState) : Pair<DGLabStruct.WaveData, Waves.AutoWaveState> {
+    fun calcAutoWave(state: AutoWaveState) : Pair<WaveData, AutoWaveState> {
         val waveMaxTiming = state.wave.waveMaxTimingSection[state.section]
         state.waveTiming = (round(waveMaxTiming.toDouble() * 1.0 * (state.waveTiming - 1).toDouble() / state.lastWaveMaxTiming.toDouble()) + 1).toInt()
         if (state.waveTiming < 1) state.waveTiming = 1
         state.lastWaveMaxTiming = state.waveTiming
         when (state.stateMachine) {
-            Waves.AutoWaveStateMachine.SEND -> {
+            AutoWaveStateMachine.SEND -> {
                 state.waveStrength = (state.waveStrength * state.c.toFloat() + 1.0f) / state.c.toFloat()
                 when (state.pc) {
                     4 -> {
@@ -90,9 +93,9 @@ object OpenDGLab {
                                 state.j = state.wave.sections[state.section].j
                                 state.pc = state.wave.sections[state.section].pc
                                 state.points = state.wave.sections[state.section].points
-                                state.stateMachine = Waves.AutoWaveStateMachine.SEND
+                                state.stateMachine = AutoWaveStateMachine.SEND
                             } else {
-                                state.stateMachine = Waves.AutoWaveStateMachine.SLEEP
+                                state.stateMachine = AutoWaveStateMachine.SLEEP
                             }
                         } else {
                             state.a = state.wave.sections[state.section].a
@@ -104,9 +107,9 @@ object OpenDGLab {
                         }
                     }
                 }
-                return Pair(DGLabStruct.WaveData(pow, i7, f806r.toInt()), state)
+                return Pair(WaveData(pow, i7, f806r.toInt()), state)
             }
-            Waves.AutoWaveStateMachine.SLEEP -> {
+            AutoWaveStateMachine.SLEEP -> {
                 val f800l = ceil(state.wave.l.toDouble() / 10.0).toInt()
                 state.waveStrength = (state.waveStrength * f800l.toFloat() + 1.0f) / f800l.toFloat()
                 state.pow = 0
@@ -114,7 +117,7 @@ object OpenDGLab {
                 state.i3 = 0
                 if (state.waveStrength >= 1.0f) {
                     state.waveStrength = 0.0f
-                    state.stateMachine = Waves.AutoWaveStateMachine.SEND
+                    state.stateMachine = AutoWaveStateMachine.SEND
                     state.section = 0
                     state.a = state.wave.sections[state.section].a
                     state.b = state.wave.sections[state.section].b
@@ -122,14 +125,14 @@ object OpenDGLab {
                     state.j = state.wave.sections[state.section].j
                     state.pc = state.wave.sections[state.section].pc
                     state.points = state.wave.sections[state.section].points
-                    return Pair(DGLabStruct.WaveData(0,0,0),state)
+                    return Pair(WaveData(0,0,0),state)
                 }
             }
         }
-        return Pair(DGLabStruct.WaveData(0,0,0), state)
+        return Pair(WaveData(0,0,0), state)
     }
 
-    fun calcWavePlot(waveState: Waves.AutoWaveState): IntArray {
+    fun calcWavePlot(waveState: AutoWaveState): IntArray {
         for (i4 in 0..99) {
             if (waveState.f811w < waveState.pow && waveState.f812x == 0) {
                 waveState.f813y[i4] = 1
@@ -161,5 +164,9 @@ object OpenDGLab {
         }
         waveState.f785A = waveState.i3
         return waveState.wavePlot
+    }
+
+    fun ByteArray.toInt888(): Int {
+        return 0 or ((this[2].toInt() and 0xFF) shl 16) or ((this[1].toInt() and 0xFF) shl 8) or (this[0].toInt() and 0xFF)
     }
 }
