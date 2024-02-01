@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGatt
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,15 +15,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DeveloperMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -109,7 +117,6 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
             ) {
                 ChannelControlUI()
             }
@@ -119,10 +126,16 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     @Composable
     fun ChannelControlUI() {
         // 通道控制UI
-        ChannelControl("A通道", channelA.value.toFloat())
-        Spacer(Modifier.height(8.dp))
-        ChannelControl("B通道", channelB.value.toFloat())
-        Spacer(Modifier.height(8.dp))
+
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+        ) {
+            ChannelControl("A通道", channelA.value.toFloat())
+            Spacer(Modifier.height(8.dp))
+            ChannelControl("B通道", channelB.value.toFloat())
+            Spacer(Modifier.height(8.dp))
+        }
 
         // 通道切换按钮
         ChannelSwitchButtons()
@@ -134,9 +147,9 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     @Composable
     fun WaveformSelectorUI() {
         if (showChannelA.value) {
-            WaveformSelectorComponent(activeChannelWave = activeChannelAWave, enableChannelWave = enableChanelAWave)
-        } else {
             WaveformSelectorComponent(activeChannelWave = activeChannelBWave, enableChannelWave = enableChanelBWave)
+        } else {
+            WaveformSelectorComponent(activeChannelWave = activeChannelAWave, enableChannelWave = enableChanelAWave)
         }
         Spacer(Modifier.height(8.dp))
     }
@@ -169,7 +182,9 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     @Composable
     fun ChannelSwitchButtons() {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(1f),
             horizontalArrangement = Arrangement.Center
         ) {
             Button(onClick = { showChannelA.value = true }, Modifier.padding(end = 8.dp)) {
@@ -198,23 +213,33 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
                 val isActive = activeChannelWave.value == wave
                 val isEnabled = enableChanelWave.value.any { it== wave }
 
-                val buttonColors = ButtonDefaults.buttonColors(
-                    containerColor = when {
-                        isActive-> Color.Green
-                        isEnabled -> Color.Yellow
-                        else -> Color.Red
-                    },
-                    contentColor = Color.White, // 这里假设按钮文本/图标总是白色
-                    disabledContainerColor = Color.Gray, // 禁用状态下的容器颜色
-                    disabledContentColor = Color.DarkGray // 禁用状态下的内容颜色
-                )
+                val backgroundColor = when {
+                    isActive -> MaterialTheme.colorScheme.primary
+                    isEnabled -> MaterialTheme.colorScheme.secondary
+                    else -> MaterialTheme.colorScheme.error
+                }
+                val contentColor = MaterialTheme.colorScheme.onPrimary
+                val disabledColor = MaterialTheme.colorScheme.onSurfaceVariant
 
-                Button(
-                    onClick = { onWaveSelected(wave) },
-                    colors = buttonColors,
-                    modifier = Modifier.padding(4.dp)
-                ) {
-                    Text(wave.waveName)
+                Column(modifier = Modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    IconButton(
+                        onClick = { onWaveSelected(wave) },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = if (isEnabled) backgroundColor else MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = if (isEnabled) contentColor else disabledColor
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.DeveloperMode,
+                            contentDescription = "Wave Icon"
+                        )
+                    }
+                    Text(
+                        text = wave.waveName,
+                        color = if (isEnabled) Color.Black else disabledColor,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
                 }
             }
         }

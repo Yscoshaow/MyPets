@@ -57,7 +57,7 @@ object QuestLoader {
         }
     }
 
-    fun processYmlFileWithJackson(context: Context, uri: Uri) {
+    private fun processYmlFileWithJackson(context: Context, uri: Uri) {
         try {
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 val data: Map<String, Any> = JACKSON_YAML.readValue(inputStream, Map::class.java) as Map<String, Any>

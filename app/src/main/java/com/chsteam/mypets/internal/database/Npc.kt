@@ -20,10 +20,11 @@ import kotlinx.coroutines.launch
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
-@Entity(indices = [Index(value = ["pack", "name"], unique = true)])
+@Entity(indices = [Index(value = ["pack", "npcKey"], unique = true)])
 data class Npc(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val pack: String,
+    val npcKey: String,
     val name: String,
     val avatar: String,
     val description: List<String>
@@ -73,6 +74,6 @@ interface NpcDao {
     @Query("SELECT * FROM Npc WHERE id = :chatId")
     suspend fun getNpcById(chatId: Int): Npc?
 
-    @Query("SELECT * FROM Npc WHERE pack = :pack AND name = :name")
-    suspend fun getNpcByPackAndName(pack: String, name: String): Npc?
+    @Query("SELECT * FROM Npc WHERE pack = :pack AND npcKey = :key")
+    suspend fun getNpcByPackAndName(pack: String, key: String): Npc?
 }
