@@ -17,6 +17,7 @@ import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.internal.compatibility.Device
 import com.chsteam.mypets.internal.compatibility.Devices
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.DGLabBLEDevice
+import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.WaveData
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleNotifyCallback
 import com.clj.fastble.callback.BleReadCallback
@@ -98,7 +99,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         }
     }
 
-    private fun waveSender(a: DGLabStruct.WaveData, b: DGLabStruct.WaveData) {
+    private fun waveSender(a: WaveData, b: WaveData) {
         BleManager.getInstance().write(
             bleDevice,
             FUNCTION,
