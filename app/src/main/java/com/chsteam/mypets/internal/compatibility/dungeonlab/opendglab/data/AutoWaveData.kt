@@ -27,18 +27,20 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
         result = 31 * result + zy
         return result
     }
-    enum class AutoWaveType(val data: AutoWaveData) {
+    enum class AutoWaveType(val waveName: String, val data: AutoWaveData) {
         OFF(
+            "关闭",
             AutoWaveData(
-            sections = arrayOf(
-                AutoWaveSection(0, 0, 0, 0, 0, arrayOf(
-                AutoWavePoint(0, 0.0, 1), AutoWavePoint(0, 0.0, 1)
-            ))
-            ),
-            l = 0, zy = 0
-        )
+                sections = arrayOf(
+                    AutoWaveSection(0, 0, 0, 0, 0, arrayOf(
+                        AutoWavePoint(0, 0.0, 1), AutoWavePoint(0, 0.0, 1)
+                    ))
+                ),
+                l = 0, zy = 0
+            )
         ),
         BREATH(
+            "呼吸",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 20, 8, 0, 1, arrayOf(
                     AutoWavePoint(0, 0.0, 1),
@@ -61,6 +63,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=35, zy=8)
         ),
         TIDE(
+            "潮汐",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 32, 11, 20, 2, arrayOf(
                     AutoWavePoint(0, 0.0, 1),
@@ -86,6 +89,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=5, zy=8)
         ),
         KEEP_CLICK(
+            "连击",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 34, 8, 20, 1, arrayOf(
                     AutoWavePoint(0, 20.0, 1),
@@ -108,6 +112,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=0, zy=8)
         ),
         QUICK_PRESS(
+            "快速按捏",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 29, 2, 44, 1, arrayOf(
                     AutoWavePoint(0, 0.0, 1),
@@ -124,6 +129,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=16, zy=8)
         ),
         STRONGER(
+            "按捏渐强",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 20, 11, 20, 1, arrayOf(
                     AutoWavePoint(0, 0.0, 1),
@@ -149,6 +155,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=5, zy=8)
         ),
         HEARTBEAT(
+            "心跳节奏",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(65, 20, 2, 6, 1, arrayOf(
                     AutoWavePoint(0, 20.0, 1),
@@ -177,6 +184,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=5, zy=16)
         ),
         COMPRESS(
+            "压缩",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(52, 16, 11, 0, 2, arrayOf(
                     AutoWavePoint(0, 20.0, 1),
@@ -210,6 +218,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=0, zy=16)
         ),
         RHYTHMIC(
+            "节奏步伐",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 20, 26, 20, 1, arrayOf(
                     AutoWavePoint(0, 0.0, 1),
@@ -250,6 +259,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=5, zy=8)
         ),
         GRAIN_TOUCH(
+            "颗粒摩擦",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 38, 4, 25, 2, arrayOf(
                     AutoWavePoint(0, 20.0, 1),
@@ -268,24 +278,27 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=0, zy=8)
         ),
         SPRING(
-            AutoWaveData(sections=arrayOf(
-                AutoWaveSection(0, 30, 4, 45, 2, arrayOf(
-                    AutoWavePoint(0, 0.18084228, 1),
-                    AutoWavePoint(1, 6.7872286, 0),
-                    AutoWavePoint(2, 13.393615, 0),
-                    AutoWavePoint(3, 20.0, 1)
-                )),
-                AutoWaveSection(0, 20, 2, 20, 1, arrayOf(
-                    AutoWavePoint(0, 0.0, 1),
-                    AutoWavePoint(1, 20.0, 1)
-                )),
-                AutoWaveSection(0, 20, 2, 20, 1, arrayOf(
-                    AutoWavePoint(0, 0.0, 1),
-                    AutoWavePoint(1, 20.0, 1)
-                ))
-            ), l=20, zy=16)
+            "渐变弹跳",
+            AutoWaveData(
+                sections=arrayOf(
+                    AutoWaveSection(0, 30, 4, 45, 2, arrayOf(
+                        AutoWavePoint(0, 0.18084228, 1),
+                        AutoWavePoint(1, 6.7872286, 0),
+                        AutoWavePoint(2, 13.393615, 0),
+                        AutoWavePoint(3, 20.0, 1)
+                    )),
+                    AutoWaveSection(0, 20, 2, 20, 1, arrayOf(
+                        AutoWavePoint(0, 0.0, 1),
+                        AutoWavePoint(1, 20.0, 1)
+                    )),
+                    AutoWaveSection(0, 20, 2, 20, 1, arrayOf(
+                        AutoWavePoint(0, 0.0, 1),
+                        AutoWavePoint(1, 20.0, 1)
+                    ))
+                ), l=20, zy=16)
         ),
         WAVE_RIPPLE(
+            "波浪涟漪",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 60, 4, 53, 4, arrayOf(
                     AutoWavePoint(0, 0.0, 1),
@@ -304,6 +317,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=5, zy=16)
         ),
         RAIN_SWEPT(
+            "雨水冲刷",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(4, 0, 3, 39, 1, arrayOf(
                     AutoWavePoint(0, 6.7057176, 1),
@@ -321,6 +335,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=25, zy=8)
         ),
         KNOCK(
+            "变速敲击",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(14, 20, 7, 41, 1, arrayOf(
                     AutoWavePoint(0, 20.0, 1),
@@ -344,6 +359,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=15, zy=8)
         ),
         SIGNAL(
+            "信号灯",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(78, 64, 4, 20, 1, arrayOf(
                     AutoWavePoint(0, 20.0, 1),
@@ -364,6 +380,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=0, zy=8)
         ),
         FLIRT1(
+            "挑逗1",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(0, 20, 10, 36, 3, arrayOf(
                     AutoWavePoint(0, 0.0, 1),
@@ -388,6 +405,7 @@ data class AutoWaveData(val sections: Array<AutoWaveSection>, val l: Int, val zy
             ), l=5, zy=8)
         ),
         FLIRT2(
+            "挑逗2",
             AutoWaveData(sections=arrayOf(
                 AutoWaveSection(27, 7, 10, 33, 3, arrayOf(
                     AutoWavePoint(0, 0.2853297, 1),
