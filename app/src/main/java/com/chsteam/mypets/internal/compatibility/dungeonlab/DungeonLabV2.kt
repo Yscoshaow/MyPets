@@ -67,20 +67,14 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
 
     @Composable
     override fun DeviceCardContent() {
-        DeviceCard(batteryLevel = battery.value.toFloat() / 100, channelAStrength = channelA.value.toFloat(), channelBStrength = channelB.value.toFloat())
+        DeviceCard(channelAStrength = channelA.value.toFloat(), channelBStrength = channelB.value.toFloat())
     }
 
     @Composable
     fun DeviceCard(
-        batteryLevel: Float,
         channelAStrength: Float,
         channelBStrength: Float,
     ) {
-        Spacer(Modifier.height(8.dp))
-        Text("电量: ${(batteryLevel * 100).toInt()}%")
-        LinearProgressIndicator(progress = batteryLevel)
-        Spacer(Modifier.height(8.dp))
-
         ChannelControl("A通道", channelAStrength)
         Spacer(Modifier.height(8.dp))
         ChannelControl("B通道", channelBStrength)

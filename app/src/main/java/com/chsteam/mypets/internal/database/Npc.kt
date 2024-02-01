@@ -22,6 +22,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 @Entity
 data class Npc(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val pack: String,
     val name: String,
     val avatar: String
 ) {
@@ -69,4 +70,7 @@ interface NpcDao {
     // 根据主键chatId查询Npc对象
     @Query("SELECT * FROM Npc WHERE id = :chatId")
     suspend fun getNpcById(chatId: Int): Npc?
+
+    @Query("SELECT * FROM Npc WHERE pack = :pack AND name = :name")
+    suspend fun getNpcByPackAndName(pack: String, name: String): Npc?
 }

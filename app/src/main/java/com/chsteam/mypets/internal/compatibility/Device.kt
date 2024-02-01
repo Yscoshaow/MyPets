@@ -7,12 +7,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -115,14 +118,14 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
         var showDialog by remember { mutableStateOf(false) }
         var showCardClick by remember { mutableStateOf(false) }
 
-        var name = deviceName
+        var name by remember { mutableStateOf(deviceName) }
 
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
                 .clickable {
-                    if(locked) return@clickable
+                    if (locked) return@clickable
                     onCardClick()
                     showCardClick = true
                 }
@@ -137,8 +140,13 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
                         style = MaterialTheme.typography.displaySmall,
                         modifier = Modifier.clickable { showDialog = true }
                     )
-                    DeviceCardContent()
                 }
+                Spacer(Modifier.height(8.dp))
+                Text("电量: ${(battery.value)}%")
+                LinearProgressIndicator(progress = battery.value.toFloat())
+                Spacer(Modifier.height(8.dp))
+
+                DeviceCardContent()
             }
         }
 

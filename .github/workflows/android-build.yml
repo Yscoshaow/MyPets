@@ -28,10 +28,8 @@ jobs:
       run: chmod +x ./gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Zip the APK
-      run: zip -r build.zip app/build/outputs/apk/debug/app-debug.apk
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
         name: Android APK
-        path: build.zip
+        path: app/build/outputs/apk/debug/app-debug.apk
