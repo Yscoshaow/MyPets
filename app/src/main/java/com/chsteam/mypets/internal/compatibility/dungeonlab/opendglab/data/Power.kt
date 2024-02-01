@@ -4,6 +4,7 @@ import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.DataOverfl
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.OpenDGLab.toInt888
 
 data class Power(val power: ByteArray) {
+
     constructor(a: Int, b: Int) : this(power = ByteArray(3)) {
         if (a < 0 || a > 2047) throw DataOverflowException()
         if (b < 0 || b > 2047) throw DataOverflowException()

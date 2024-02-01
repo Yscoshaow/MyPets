@@ -33,6 +33,13 @@ class BluetoothViewModel : ViewModel() {
         })
     }
 
+    override fun onCleared() {
+        this.availabilityDevice.value.forEach {
+            BleManager.getInstance().disconnect(it.bleDevice)
+            it.stopTicker()
+        }
+    }
+
 
 
 }

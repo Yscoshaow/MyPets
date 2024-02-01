@@ -1,6 +1,7 @@
 package com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data
 
 data class TouchWaveData(val ax: Int, val ay: Int, val az: Int) {
+
     enum class TouchWaveType(val data: Array<TouchWaveData>) {
         EXTRUSION(arrayOf(
             TouchWaveData(1, 9, 0),

@@ -34,7 +34,7 @@ conversations:
     player_options:
       beCat:
         text: "好的呢, 主人"
-        pointer: ""
+        pointer: "firstTask"
       doNotThink:
         text: "才，才不是呢"
         pointer: "force"

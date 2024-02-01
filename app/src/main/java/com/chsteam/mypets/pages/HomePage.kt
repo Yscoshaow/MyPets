@@ -1,7 +1,9 @@
 package com.chsteam.mypets.pages
 
+import android.hardware.SensorListener
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -45,21 +47,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.chsteam.mypets.api.config.quest.QuestPackage
-import com.chsteam.mypets.internal.Instruction
-import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.internal.database.ChatViewModel
 import com.chsteam.mypets.internal.database.Message
 import com.chsteam.mypets.internal.database.Npc
-import com.chsteam.mypets.internal.database.Post
-import com.chsteam.mypets.internal.objectives.SelfObjective
-import com.chsteam.mypets.internal.objectives.ShockObjective
-import com.chsteam.mypets.internal.utils.convertImageToBase64
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.Date
 
 class HomePage : Page, KoinComponent {
 
@@ -121,7 +114,7 @@ class HomePage : Page, KoinComponent {
 
     @Composable
     fun MessageItem(npc: Npc, message: Message, onClick: () -> Unit) {
-        Row {
+        Row(modifier = Modifier.clickable { onClick() }) {
             Image(npc.imageBitmap.value, contentDescription = npc.name)
             Column {
                 Text(text = npc.name)

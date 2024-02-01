@@ -4,6 +4,7 @@ import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.DataOverfl
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.OpenDGLab.toInt888
 
 data class WaveData(val wave: ByteArray) {
+
     constructor(x: Int, y: Int, z: Int) : this(wave = ByteArray(3)) {
         if (x < 0 || x > 31) throw DataOverflowException()
         if (y < 0 || y > 1023) throw DataOverflowException()

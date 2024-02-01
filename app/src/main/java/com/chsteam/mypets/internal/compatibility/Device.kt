@@ -48,7 +48,7 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
 
     val battery = mutableStateOf(0)
 
-    var locked = false
+    var controlType = ControlType.HUMAN
 
     private var initialized = false
 
@@ -126,7 +126,6 @@ abstract class Device(val context: Context, val viewModel: BluetoothViewModel, v
                 .fillMaxWidth()
                 .padding(16.dp)
                 .clickable {
-                    if (locked) return@clickable
                     onCardClick()
                     showCardClick = true
                 }

@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.chsteam.mypets.api.Objective
 import com.chsteam.mypets.internal.Instruction
 import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
+import com.chsteam.mypets.internal.compatibility.ControlType
 import com.chsteam.mypets.internal.compatibility.Device
 import com.chsteam.mypets.internal.compatibility.Devices
 
@@ -110,7 +111,7 @@ class ShockObjective(instruction: Instruction) : Objective(instruction) {
 
                     Spacer(Modifier.weight(1f))
                     IconButton(onClick = {
-                        deivece?.locked
+                        deivece?.controlType = ControlType.TASK
                     }) {
                         Icon(Icons.Outlined.Start, contentDescription = "开始")
                     }

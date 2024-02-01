@@ -16,10 +16,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.SouthWest
 import androidx.compose.material.icons.outlined.DeveloperMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -30,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,8 +42,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
+import com.chsteam.mypets.internal.compatibility.ControlType
 import com.chsteam.mypets.internal.compatibility.Device
 import com.chsteam.mypets.internal.compatibility.Devices
+import com.chsteam.mypets.internal.compatibility.SpeedController
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.DGLabBLEDevice
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.OpenDGLab
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.AutoWaveData
@@ -50,13 +57,15 @@ import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.DelicateCoroutinesApi
 import java.lang.Math.random
 
 
 @OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("MissingPermission")
-class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: BleDevice) : Device(context, viewModel, bleDevice) {
+class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: BleDevice) : Device(context, viewModel, bleDevice), SpeedController {
 
     companion object {
         private const val BATTERY = "955A180A-0FE2-F5AA-A094-84B8D4F3E8AD"
@@ -73,6 +82,22 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     override val tickRate: Int
         get() = 10
 
+    override val locationCallback: LocationCallback
+        get() = object : LocationCallback() {
+            var init = false
+            override fun onLocationResult(result: LocationResult) {
+                result.lastLocation?.speed?.let { speed ->
+                    if(speed > 1f) init = true
+                    if(init && speed < 2.5f) {
+                        channelA.value = ((2.5f - speed) * 800).toInt()
+                        channelB.value = ((2.5f - speed) * 800).toInt()
+                    }
+                    this@DungeonLabV2.speed.value = speed
+                }
+            }
+        }
+
+    val speed = mutableStateOf(0f)
 
     val channelA = mutableStateOf(0)
     val channelB = mutableStateOf(0)
@@ -101,17 +126,6 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     }
 
     @Composable
-    fun DeviceCard(
-        channelAStrength: Float,
-        channelBStrength: Float,
-    ) {
-        ChannelControl("A通道", channelAStrength)
-        Spacer(Modifier.height(8.dp))
-        ChannelControl("B通道", channelBStrength)
-        Spacer(Modifier.height(8.dp))
-    }
-
-    @Composable
     override fun CardClickedShow( onDismissRequest: () -> Unit) {
         Dialog(onDismissRequest = { onDismissRequest() }) {
             ElevatedCard(
@@ -119,12 +133,40 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
                     .fillMaxWidth()
             ) {
                 ChannelControlUI()
+                Spacer(modifier = Modifier.padding(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    ChannelSwitchButtons()
+                    Spacer(modifier = Modifier.padding(end = 12.dp))
+                }
+                Spacer(modifier = Modifier.padding(12.dp))
             }
         }
     }
 
     @Composable
-    fun ChannelControlUI() {
+    private fun DeviceCard(
+        channelAStrength: Float,
+        channelBStrength: Float,
+    ) {
+        ChannelControl("A通道", channelAStrength)
+        Spacer(Modifier.height(8.dp))
+        ChannelControl("B通道", channelBStrength)
+        Spacer(Modifier.height(8.dp))
+        Button(onClick = {
+            activeSpeed()
+            this@DungeonLabV2.enableChanelAWave.value = AutoWaveData.AutoWaveType.values().toList()
+            this@DungeonLabV2.enableChanelBWave.value = AutoWaveData.AutoWaveType.values().toList()
+        }) {
+            Text(text = "激活速度传感器操作 ${speed.value}")
+        }
+    }
+
+    @Composable
+    private fun ChannelControlUI() {
         // 通道控制UI
 
         Column(modifier = Modifier
@@ -137,15 +179,12 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
             Spacer(Modifier.height(8.dp))
         }
 
-        // 通道切换按钮
-        ChannelSwitchButtons()
-
         // 根据当前显示的通道，显示对应的波形选择器
         WaveformSelectorUI()
     }
 
     @Composable
-    fun WaveformSelectorUI() {
+    private fun WaveformSelectorUI() {
         if (showChannelA.value) {
             WaveformSelectorComponent(activeChannelWave = activeChannelBWave, enableChannelWave = enableChanelBWave)
         } else {
@@ -155,11 +194,12 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     }
 
     @Composable
-    fun WaveformSelectorComponent(activeChannelWave: MutableState<AutoWaveData.AutoWaveType>, enableChannelWave: MutableState<List<AutoWaveData.AutoWaveType>>) {
+    private fun WaveformSelectorComponent(activeChannelWave: MutableState<AutoWaveData.AutoWaveType>, enableChannelWave: MutableState<List<AutoWaveData.AutoWaveType>>) {
         WaveformSelector(
             activeChannelWave = activeChannelWave,
             enableChanelWave = enableChannelWave,
         ) { type ->
+            if(controlType != ControlType.HUMAN) return@WaveformSelector
             if (type in enableChannelWave.value) {
                 enableChannelWave.value = enableChannelWave.value - type
             } else {
@@ -180,24 +220,20 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     }
 
     @Composable
-    fun ChannelSwitchButtons() {
-        Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(1f),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Button(onClick = { showChannelA.value = true }, Modifier.padding(end = 8.dp)) {
-                Text("A通道")
+    private fun ChannelSwitchButtons() {
+        val icon = Icons.Filled.SouthWest
+
+        ExtendedFloatingActionButton(
+            icon = { Icon(icon, "") },
+            text = { Text(if (showChannelA.value) "切换至B通道" else "切换至A通道") },
+            onClick = {
+                showChannelA.value = !showChannelA.value
             }
-            Button(onClick = { showChannelA.value = false }, Modifier.padding(start = 8.dp)) {
-                Text("B通道")
-            }
-        }
+        )
     }
 
     @Composable
-    fun WaveformSelector(
+    private fun WaveformSelector(
         activeChannelWave: State<AutoWaveData.AutoWaveType>,
         enableChanelWave: State<List<AutoWaveData.AutoWaveType>>,
         onWaveSelected: (AutoWaveData.AutoWaveType) -> Unit
@@ -247,7 +283,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
 
 
     @Composable
-    fun ChannelControl(
+    private fun ChannelControl(
         channelName: String,
         strength: Float,
     ) {
@@ -255,7 +291,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         Slider(
             value = strength,
             onValueChange = { fl ->
-                if(locked) return@Slider
+                if(controlType != ControlType.HUMAN) return@Slider
                 if(channelName.contains("A")) {
                     channelA.value = fl.toInt()
                     device.channelAPower = fl.toInt()

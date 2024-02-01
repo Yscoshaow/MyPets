@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+    implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
     implementation("io.insert-koin:koin-android:3.5.3")
