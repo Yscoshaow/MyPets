@@ -1,6 +1,5 @@
 package com.chsteam.mypets.internal.compatibility.dungeonlab
 
-import android.bluetooth.BluetoothDevice
 import android.content.Context
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
@@ -22,7 +21,7 @@ class DungeonLabV3(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     }
 
     @Composable
-    override fun DeviceCard() {
+    override fun DeviceCardContent() {
         Card {
 
         }

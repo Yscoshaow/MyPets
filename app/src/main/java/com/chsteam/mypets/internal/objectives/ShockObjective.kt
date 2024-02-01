@@ -34,6 +34,11 @@ import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.internal.compatibility.Devices
 
 class ShockObjective(instruction: Instruction) : Objective(instruction) {
+
+    companion object {
+        private val availableDevices = listOf(Devices.DUNGEON_LAB_V3, Devices.DUNGEON_LAB_V2)
+    }
+
     override val typeName: String
         get() = "电击任务"
 
@@ -44,7 +49,7 @@ class ShockObjective(instruction: Instruction) : Objective(instruction) {
     override fun TaskCard() {
 
         var expanded by remember { mutableStateOf(false) }
-        var selectedOption by remember { mutableStateOf(Devices.DUNGEON_LAB_V2) }
+        var selectedOption by remember { mutableStateOf("") }
 
         val viewModel: BluetoothViewModel = viewModel()
 
@@ -83,9 +88,9 @@ class ShockObjective(instruction: Instruction) : Objective(instruction) {
                         onDismissRequest = { expanded = false }
                     ) {
 
-                        viewModel.availabilityDevice.value.filter { it.type == Devices.DUNGEON_LAB_V3 || it.type == Devices.DUNGEON_LAB_V2 }.forEach { device ->
-                            DropdownMenuItem(text = { Text(text = device.type.i18Name) }, onClick = {
-                                selectedOption = device.type
+                        viewModel.availabilityDevice.value.filter { it.type in availableDevices }.forEach { device ->
+                            DropdownMenuItem(text = { Text(text = device.deviceName) }, onClick = {
+                                selectedOption = device.deviceName
                                 expanded = false
                             })
                         }

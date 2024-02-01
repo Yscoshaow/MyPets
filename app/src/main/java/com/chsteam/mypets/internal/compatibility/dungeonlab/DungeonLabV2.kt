@@ -70,41 +70,25 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     }
 
     @Composable
-    override fun DeviceCard() {
-        DeviceCard(deviceName = "Dungeon Lab", batteryLevel = battery.value.toFloat() / 100, channelAStrength = channelA.value.toFloat(), channelBStrength = channelB.value.toFloat())
+    override fun DeviceCardContent() {
+        DeviceCard(batteryLevel = battery.value.toFloat() / 100, channelAStrength = channelA.value.toFloat(), channelBStrength = channelB.value.toFloat())
     }
 
     @Composable
     fun DeviceCard(
-        deviceName: String,
         batteryLevel: Float,
         channelAStrength: Float,
         channelBStrength: Float,
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = deviceName, style = MaterialTheme.typography.displayMedium)
-                    //Image(bitmap = avatarImage, contentDescription = "Avatar")
-                }
-                Spacer(Modifier.height(8.dp))
-                Text("电量: ${(batteryLevel * 100).toInt()}%")
-                LinearProgressIndicator(progress = batteryLevel)
-                Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(8.dp))
+        Text("电量: ${(batteryLevel * 100).toInt()}%")
+        LinearProgressIndicator(progress = batteryLevel)
+        Spacer(Modifier.height(8.dp))
 
-                ChannelControl("A通道", channelAStrength)
-                Spacer(Modifier.height(8.dp))
-                ChannelControl("B通道", channelBStrength)
-                Spacer(Modifier.height(8.dp))
-            }
-        }
+        ChannelControl("A通道", channelAStrength)
+        Spacer(Modifier.height(8.dp))
+        ChannelControl("B通道", channelBStrength)
+        Spacer(Modifier.height(8.dp))
     }
 
     @Composable
@@ -175,7 +159,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         battery.value = level
     }
 
-    private fun bleConnect() {
+    private fun bleConnect(reconnect: Boolean = false) {
         BleManager.getInstance().connect(bleDevice, object : BleGattCallback() {
             override fun onStartConnect() {
 
@@ -184,7 +168,9 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
 
             }
             override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
-                viewModel.availabilityDevice.value = viewModel.availabilityDevice.value + this@DungeonLabV2
+                if(!reconnect) {
+                    viewModel.availabilityDevice.value = viewModel.availabilityDevice.value + this@DungeonLabV2
+                }
                 BleManager.getInstance().notify(
                     bleDevice,
                     BATTERY,
@@ -232,7 +218,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         if (currentReconnectAttempts < maxReconnectAttempts) {
             currentReconnectAttempts++
             Handler().postDelayed({
-                bleConnect()
+                bleConnect(true)
             }, 1000)
         } else {
             viewModel.availabilityDevice.value = viewModel.availabilityDevice.value - this
