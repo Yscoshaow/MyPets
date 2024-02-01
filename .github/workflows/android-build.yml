@@ -28,7 +28,6 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Upload Artifact
-      if: "contains(github.event.head_commit.message, '[publish]')"
       uses: actions/upload-artifact@v2
       with:
         name: Android APK
