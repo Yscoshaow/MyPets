@@ -61,6 +61,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.DelicateCoroutinesApi
 import java.lang.Math.random
+import java.util.stream.Collectors.toList
 
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -89,8 +90,14 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
                 result.lastLocation?.speed?.let { speed ->
                     if(speed > 1f) init = true
                     if(init && speed < 2.5f) {
-                        channelA.value = ((2.5f - speed) * 800).toInt()
-                        channelB.value = ((2.5f - speed) * 800).toInt()
+                        val value = ((2.5f - speed) * 80).toInt()
+                        channelA.value = value
+                        channelB.value = value
+                        val aRandom = (70..130).random()
+                        val bRandom = (70..130).random()
+                        this@DungeonLabV2.device.channelAPower = value * aRandom
+                        this@DungeonLabV2.device.channelBPower = value * bRandom
+                        this@DungeonLabV2.device.selectPower()
                     }
                     this@DungeonLabV2.speed.value = speed
                 }
@@ -158,8 +165,8 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         Spacer(Modifier.height(8.dp))
         Button(onClick = {
             activeSpeed()
-            this@DungeonLabV2.enableChanelAWave.value = AutoWaveData.AutoWaveType.values().toList()
-            this@DungeonLabV2.enableChanelBWave.value = AutoWaveData.AutoWaveType.values().toList()
+            this@DungeonLabV2.enableChanelAWave.value = AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }.toList()
+            this@DungeonLabV2.enableChanelBWave.value = AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }.toList()
         }) {
             Text(text = "激活速度传感器操作 ${speed.value}")
         }

@@ -11,6 +11,7 @@ import androidx.core.location.LocationManagerCompat
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 
 interface SpeedController {
 
@@ -21,7 +22,10 @@ interface SpeedController {
     var controlType: ControlType
 
     val locationRequest: LocationRequest
-        get() = LocationRequest.Builder(1000).build()
+        get() = LocationRequest.Builder(50)
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .setMinUpdateIntervalMillis(200)
+            .build()
 
     fun activeSpeed() {
         if (ActivityCompat.checkSelfPermission(
