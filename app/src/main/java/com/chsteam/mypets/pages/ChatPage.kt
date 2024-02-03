@@ -222,7 +222,7 @@ class ChatPage : Page {
     @Composable
     fun Options(text: String) {
         Row(Modifier.fillMaxWidth(1f)) {
-            val color = MaterialTheme.colorScheme.secondaryContainer
+            val color = MaterialTheme.colorScheme.primary
             Text(text = text, modifier = Modifier
                 .drawBehind {
                     val bubble = Path().apply {
@@ -241,7 +241,8 @@ class ChatPage : Page {
                 }
                 .fillMaxWidth()
                 .padding(20.dp, 20.dp),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onPrimary
             )
         }
         Spacer(modifier = Modifier.padding(vertical = 3.dp))

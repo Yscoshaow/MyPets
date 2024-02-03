@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Start
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
@@ -67,6 +68,7 @@ class ExperimentalPage : Page, KoinComponent {
     fun Experimental(innerPadding: PaddingValues) {
         val context = LocalContext.current
         Column(modifier = Modifier.padding(innerPadding)) {
+            Divider()
             SpeedControllerDGCard()
         }
     }
