@@ -60,6 +60,7 @@ import com.chsteam.mypets.internal.database.Npc
 import com.chsteam.mypets.pages.Utils.loadAvatarFromAssets
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.util.Date
 
 class HomePage : Page, KoinComponent {
 
@@ -112,46 +113,32 @@ class HomePage : Page, KoinComponent {
         LazyColumn {
             item {
                 latestMessages.forEach {
-                    MessageItem(it.key, it.value) {
-
-                    }
+                    MessageItem(it.key, it.value, navController)
                 }
-                testNpcMessage("quest/npc/avatar/koyori.png", "韶", "你看到我的盈了吗") {
-                    navController.navigate(Pages.CHAT.name)
-                }
-                testNpcMessage("quest/npc/avatar/saga.png", "盈", "我是韶韶的狗（") {
-                    navController.navigate(Pages.CHAT.name)
-                }
+                MessageItem(npc = Npc(0, "", "yscos_shaow", "韶", "quest/npc/avatar/koyori.png", listOf("正在调教小猫咪")), message = Message(0, 0, "你好呀我的小猫咪", Date()), navController)
+                MessageItem(npc = Npc(0, "", "yin", "盈", "quest/npc/avatar/saga.png", listOf("韶的小猫咪")), message = Message(0, 0, "你是？", Date()), navController)
             }
         }
     }
 
     @Composable
-    fun testNpcMessage(avatar: String, name: String, text: String, onClick: () -> Unit) {
-        Box(modifier = Modifier.clickable { onClick() }) {
+    fun MessageItem(npc: Npc, message: Message, navController: NavController) {
+        Box(modifier = Modifier.clickable {
+            viewModel.chattingNpc.value = npc
+            navController.navigate(Pages.CHAT.name)
+        }) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()) {
-                loadAvatarFromAssets(assetPath = avatar, modifier = Modifier.padding(5.dp))
-                Column(modifier = Modifier.fillMaxHeight().padding(start = 10.dp)) {
+                npc.ShowAvatar(modifier = Modifier.padding(5.dp))
+                Column(modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(start = 10.dp)) {
                     Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
-                        Text(text = name, color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        Text(text = text)
+                        Text(text = npc.name, color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text(text = message.message)
                     }
                     Divider()
                 }
             }
-        }
-
-    }
-
-    @Composable
-    fun MessageItem(npc: Npc, message: Message, onClick: () -> Unit) {
-        Row(modifier = Modifier.clickable { onClick() }) {
-            Image(npc.imageBitmap.value, contentDescription = npc.name)
-            Column {
-                Text(text = npc.name)
-                Text(text = message.message)
-            }
-            Divider()
         }
     }
     

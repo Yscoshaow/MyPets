@@ -1,5 +1,6 @@
 package com.chsteam.mypets.pages
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.size
@@ -16,13 +17,21 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 
 object Utils {
+
     @Composable
-    fun loadAvatarFromAssets(assetPath: String, modifier: Modifier = Modifier) {
+    fun loadAvatarFromAssets(assetPath: String, modifier: Modifier = Modifier, size: Int= 7) {
+
+        val path = if(assetPath.startsWith("file:///storage")) {
+            Uri.parse(assetPath)
+        } else {
+            "file:///android_asset/$assetPath"
+        }
+
         BoxWithConstraints {
-            val imageSize = with(LocalDensity.current) { maxWidth / 7 }
+            val imageSize = with(LocalDensity.current) { maxWidth / size }
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("file:///android_asset/$assetPath")
+                    .data(path)
                     .build(),
                 contentDescription = null,
                 modifier = modifier

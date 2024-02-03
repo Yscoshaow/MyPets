@@ -1,12 +1,8 @@
 package com.chsteam.mypets.pages
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,14 +10,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -42,21 +34,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.chsteam.mypets.internal.database.ChatViewModel
+import com.chsteam.mypets.internal.database.Message
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class ChatPage : Page {
+class ChatPage : Page, KoinComponent {
+
+    val viewModel: ChatViewModel by inject()
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -85,10 +78,12 @@ class ChatPage : Page {
     fun MessageList() {
         LazyColumn {
             item {
-                Spacer(modifier = Modifier.padding(5.dp))
-                MessageBubbleNpc(message = "你的主人已经把你交给我代为调教啦, 从今天开始就要当我的乖猫咪了哦")
-                Spacer(modifier = Modifier.padding(5.dp))
-                MessageBubbleYour(message = "喵~喵~喵")
+                if(viewModel.chattingNpc.value != null) {
+                    viewModel.allMessage.value?.get(viewModel.chattingNpc.value)?.forEach { message: Message ->
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        MessageBubbleNpc(message = message.message)
+                    }
+                }
             }
         }
     }
@@ -156,18 +151,15 @@ class ChatPage : Page {
         TopAppBar(
             title = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Utils.loadAvatarFromAssets(
-                        assetPath = "quest/npc/avatar/koyori.png",
-                        modifier = Modifier.padding(5.dp)
-                    )
+                    viewModel.chattingNpc.value?.ShowAvatar(Modifier.padding(5.dp))
                     Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.padding(start = 10.dp)) {
-                        Text(text = "韶", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                        Text(text = "正在调教小猫", fontSize = 16.sp)
+                        Text(text = viewModel.chattingNpc.value?.name ?: "", color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text(text = viewModel.chattingNpc.value?.description?.get(0) ?: "", fontSize = 16.sp)
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = {
                         scope.launch {
-                            snackbarHostState.showSnackbar("韶没有给予你她的电话权限", actionLabel = "Error")
+                            snackbarHostState.showSnackbar("${viewModel.chattingNpc.value?.name}没有给予你她的电话权限", actionLabel = "Error")
                         }
                     }) {
                         Icon(imageVector = Icons.Filled.Phone, contentDescription = "")

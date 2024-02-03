@@ -1,24 +1,15 @@
 package com.chsteam.mypets.internal.database
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.room.Dao
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
+import com.chsteam.mypets.pages.Utils
 
 @Entity(indices = [Index(value = ["pack", "npcKey"], unique = true)])
 data class Npc(
@@ -29,34 +20,11 @@ data class Npc(
     val avatar: String,
     val description: List<String>
 ) {
-
-    @Ignore
-    var imageBitmap: MutableState<ImageBitmap> = mutableStateOf(createBlankImageBitmap())
-        private set
-
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            imageBitmap.value = getAvatarImageBitmap()
-        }
+    @Composable
+    fun ShowAvatar(modifier: Modifier = Modifier, size: Int = 7) {
+        Utils.loadAvatarFromAssets(assetPath = avatar, modifier, size)
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
-    private suspend fun getAvatarImageBitmap(): ImageBitmap {
-        // 使用协程处理图片加载
-        return try {
-            val bytes = Base64.decode(avatar)
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            bitmap.asImageBitmap()
-        } catch (e: Exception) {
-            createBlankImageBitmap()
-        }
-    }
-
-    private fun createBlankImageBitmap(): ImageBitmap {
-        val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-        bitmap.eraseColor(android.graphics.Color.TRANSPARENT) // 设置为透明
-        return bitmap.asImageBitmap()
-    }
 }
 
 @Dao

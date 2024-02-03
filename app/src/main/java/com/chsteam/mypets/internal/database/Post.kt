@@ -93,11 +93,7 @@ data class Post(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            bitmap = npcData!!.imageBitmap.value,
-                            contentDescription = "Avatar",
-                            modifier = Modifier.size(40.dp)
-                        )
+                        npc.value?.ShowAvatar()
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(text = npcData!!.name)
                         Spacer(modifier = Modifier.height(8.dp))

@@ -54,6 +54,7 @@ dependencies {
     implementation("androidx.documentfile:documentfile:1.0.1")
     val room_version = "2.6.1"
     var carmera_version = "1.3.1"
+    val paging_version = "3.2.1"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
@@ -73,6 +74,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.paging:paging-runtime:$paging_version")
+    implementation("androidx.paging:paging-compose:3.3.0-alpha02")
     implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
@@ -80,6 +83,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.fasterxml.jackson.core:jackson-core:2.16.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
+
 
 
     kapt("androidx.room:room-compiler:$room_version")
