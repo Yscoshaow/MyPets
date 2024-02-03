@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.internal.database.ChatViewModel
 import com.chsteam.mypets.internal.database.MyPetsDatabase
+import com.chsteam.mypets.internal.experimental.ExperimentalViewModel
 import org.koin.android.ext.koin.androidApplication
 
 val databaseModule = module {
@@ -21,6 +22,7 @@ val databaseModule = module {
 val viewModelModule = module {
     single { BluetoothViewModel() }
     single { ChatViewModel() }
+    single { ExperimentalViewModel() }
 }
 
 val appModule = module {

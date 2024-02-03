@@ -40,16 +40,15 @@ import com.chsteam.mypets.internal.compatibility.ControlType
 import com.chsteam.mypets.internal.compatibility.Devices
 import com.chsteam.mypets.internal.compatibility.dungeonlab.DungeonLabV2
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.AutoWaveData
+import com.chsteam.mypets.internal.experimental.ExperimentalViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class ExperimentalPage : Page, KoinComponent {
 
-    companion object {
-        var dungeonLabV2 : DungeonLabV2? = null
-    }
-
     private val viewModel: BluetoothViewModel by inject()
+
+    private val expViewModel: ExperimentalViewModel by inject()
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -77,11 +76,16 @@ class ExperimentalPage : Page, KoinComponent {
     fun SpeedControllerDGCard() {
 
         var expanded by remember { mutableStateOf(false) }
-        var selectedOption by remember { mutableStateOf("") }
-
-        val viewModel: BluetoothViewModel = viewModel()
 
         val context = LocalContext.current
+        var dungeonLabV2 = expViewModel.speedController.value
+
+        var selectedOption by remember { if(dungeonLabV2 == null) {
+            mutableStateOf("")
+        } else {
+            mutableStateOf(dungeonLabV2!!.deviceName.value)
+        }
+        }
 
         ElevatedCard(
             modifier = Modifier
@@ -91,12 +95,13 @@ class ExperimentalPage : Page, KoinComponent {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = "步速小游戏", style = MaterialTheme.typography.displaySmall)
                 Spacer(Modifier.height(12.dp))
-                TextField(value = "开启本游戏后，你需要保持步速达到2m/s, 不然就会遭到郊狼电击哦.", onValueChange = {}, readOnly = true)
+
+                TextField(value = "开启本游戏后，你需要保持步速达到2m/s, 不然就会遭到郊狼电击哦. 你当前的速度是 ${dungeonLabV2?.speed?.value?: 0f}", onValueChange = {}, readOnly = true)
                 Spacer(Modifier.height(12.dp))
                 Column {
                     TextField(
                         modifier = Modifier.fillMaxWidth(1f),
-                        value = "设备选择",
+                        value = selectedOption,
                         onValueChange = {  },
                         label = { Text("设备类型") },
                         keyboardOptions = KeyboardOptions.Default.copy(
@@ -117,8 +122,7 @@ class ExperimentalPage : Page, KoinComponent {
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-
-                        viewModel.availabilityDevice.value.filter { it.type == Devices.DUNGEON_LAB_V2}.forEach { device ->
+                        viewModel.availabilityDevice.value.filter { it.type == Devices.DUNGEON_LAB_V2 }.forEach { device ->
                             DropdownMenuItem(text = { Text(text = device.deviceName.value) }, onClick = {
                                 selectedOption = device.deviceName.value
                                 expanded = false
