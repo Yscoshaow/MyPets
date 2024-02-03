@@ -1,33 +1,26 @@
 package com.chsteam.mypets.pages
 
-import android.hardware.SensorListener
-import android.widget.Space
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -52,22 +45,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 import com.chsteam.mypets.internal.database.ChatViewModel
 import com.chsteam.mypets.internal.database.Message
 import com.chsteam.mypets.internal.database.Npc
+import com.chsteam.mypets.pages.Utils.loadAvatarFromAssets
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -88,11 +77,12 @@ class HomePage : Page, KoinComponent {
 
         val content: @Composable (PaddingValues) -> Unit = { padding ->
             Surface(modifier = Modifier.padding(padding)) {
+                Divider()
                 HorizontalPager(
                     state = pagerState,
                 ) { page ->
                     when(page) {
-                        0 -> ChattingList()
+                        0 -> ChattingList(navController)
                         1 -> CurrentTask()
                         2 -> Share()
                     }
@@ -116,7 +106,7 @@ class HomePage : Page, KoinComponent {
     }
 
     @Composable
-    fun ChattingList() {
+    fun ChattingList(navController: NavController) {
         val latestMessages by viewModel.latestMessages.observeAsState(initial = emptyMap())
         LazyColumn {
             item {
@@ -125,17 +115,21 @@ class HomePage : Page, KoinComponent {
 
                     }
                 }
-                testNpcMessage("quest/npc/avatar/koyori.png", "韶", "你看到我的盈了吗")
-                testNpcMessage("quest/npc/avatar/saga.png", "盈", "我是韶韶的狗（")
+                testNpcMessage("quest/npc/avatar/koyori.png", "韶", "你看到我的盈了吗") {
+                    navController.navigate(Pages.CHAT.name)
+                }
+                testNpcMessage("quest/npc/avatar/saga.png", "盈", "我是韶韶的狗（") {
+                    navController.navigate(Pages.CHAT.name)
+                }
             }
         }
     }
 
     @Composable
-    fun testNpcMessage(avatar: String, name: String, text: String) {
-        Box {
+    fun testNpcMessage(avatar: String, name: String, text: String, onClick: () -> Unit) {
+        Box(modifier = Modifier.clickable { onClick() }) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()) {
-                LoadAssetImageWithSubcomposeAsyncImage(assetPath = avatar, modifier = Modifier.padding(5.dp))
+                loadAvatarFromAssets(assetPath = avatar, modifier = Modifier.padding(5.dp))
                 Column(modifier = Modifier.fillMaxHeight().padding(start = 10.dp)) {
                     Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.SpaceBetween) {
                         Text(text = name, color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
@@ -146,33 +140,6 @@ class HomePage : Page, KoinComponent {
             }
         }
 
-    }
-
-    @Composable
-    fun LoadAssetImageWithSubcomposeAsyncImage(assetPath: String, modifier: Modifier = Modifier) {
-        BoxWithConstraints {
-            val imageSize = with(LocalDensity.current) { maxWidth / 7 }
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("file:///android_asset/$assetPath")
-                    .build(),
-                contentDescription = null,
-                modifier = modifier
-                    .size(imageSize)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop,
-                loading = {
-                    Box(contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                },
-                error = {
-                    Box(contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-            )
-        }
     }
 
     @Composable

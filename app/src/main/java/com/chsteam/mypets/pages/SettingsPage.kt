@@ -79,6 +79,7 @@ class SettingsPage : Page {
     fun SettingsList(innerPadding: PaddingValues) {
         val context = LocalContext.current
         Column(modifier = Modifier.padding(innerPadding)) {
+            Divider()
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
                 var checked by remember { mutableStateOf(PermissionManager.hasPermissions(PermissionManager.BLUETOOTH_PERMISSION, context)) }
 

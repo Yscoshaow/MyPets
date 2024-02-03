@@ -96,6 +96,7 @@ class DevicesPage : Page, KoinComponent {
             }
         ) { paddingValues ->
             Surface(modifier = Modifier.padding(paddingValues)) {
+                Divider()
                 LazyColumn {
                     item {
                         availabilityDevice.forEach {
