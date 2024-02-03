@@ -71,7 +71,7 @@ class SettingsPage : Page {
                         contentDescription = "Localized description"
                     )
                 }
-            },
+            }
         )
     }
 

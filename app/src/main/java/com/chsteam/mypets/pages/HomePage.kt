@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.icons.outlined.DataObject
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Divider
@@ -241,6 +242,21 @@ class HomePage : Page, KoinComponent {
                     navController.navigate(Pages.DEVICES.name)
                 }
             )
+            Divider()
+            NavigationDrawerItem(
+                label = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.DataObject ,"Experimental", modifier = Modifier.padding(end = 24.dp, start = 12.dp))
+                        Text(text = "实验性功能", fontSize = TextUnit(23f, TextUnitType.Sp))
+                    }
+                },
+                shape = RectangleShape,
+                selected = false,
+                onClick = {
+                    navController.navigate(Pages.EXPERIMENTAL.name)
+                }
+            )
+            Divider()
         }
     }
 }

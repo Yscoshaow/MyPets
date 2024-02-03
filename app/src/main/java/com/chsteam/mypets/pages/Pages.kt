@@ -5,5 +5,6 @@ enum class Pages(val page: Page) {
     SETTINGS(SettingsPage()),
     CHAT(ChatPage()),
     TASK(TaskPage()),
-    DEVICES(DevicesPage())
+    DEVICES(DevicesPage()),
+    EXPERIMENTAL(ExperimentalPage())
 }

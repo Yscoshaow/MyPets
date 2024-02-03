@@ -161,17 +161,6 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         Spacer(Modifier.height(8.dp))
         ChannelControl("B通道", channelBStrength)
         Spacer(Modifier.height(8.dp))
-        Button(onClick = {
-            activeSpeed()
-            this@DungeonLabV2.enableChanelAWave.value =
-                AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }
-                    .toList()
-            this@DungeonLabV2.enableChanelBWave.value =
-                AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }
-                    .toList()
-        }) {
-            Text(text = "激活速度传感器操作 ${speed.value}")
-        }
     }
 
     @Composable
