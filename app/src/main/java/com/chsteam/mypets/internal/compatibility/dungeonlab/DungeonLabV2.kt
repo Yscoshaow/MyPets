@@ -88,15 +88,17 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
             var init = false
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.speed?.let { speed ->
-                    if(speed > 1f) init = true
-                    if(init && speed < 2.5f) {
-                        val value = ((2.5f - speed) * 80).toInt()
-                        channelA.value = value
-                        channelB.value = value
-                        val aRandom = (70..130).random()
-                        val bRandom = (70..130).random()
-                        this@DungeonLabV2.device.channelAPower = value * aRandom
-                        this@DungeonLabV2.device.channelBPower = value * bRandom
+                    if (speed > 1f) init = true
+                    if (init && speed < 1.5f && speed > 0.2) {
+                        val value = ((1.5f - speed) * 80).toInt()
+                        val aRandom = (7..13).random() * value
+                        val bRandom = (7..13).random() * value
+                        val trueA = if (aRandom > 2047) 2047 else aRandom
+                        val trueB = if (bRandom > 2047) 2047 else bRandom
+                        channelA.value = trueA
+                        channelB.value = trueB
+                        this@DungeonLabV2.device.channelAPower = trueA
+                        this@DungeonLabV2.device.channelBPower = trueB
                         this@DungeonLabV2.device.selectPower()
                     }
                     this@DungeonLabV2.speed.value = speed
@@ -117,7 +119,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
 
     val device = DGLabBLEDevice(::waveSender, ::powerSender, ::powerCallback, ::batteryCallback)
 
-    private val showChannelA =  mutableStateOf(true)
+    private val showChannelA = mutableStateOf(true)
 
     init {
         setupWaveSelection()
@@ -129,11 +131,14 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
 
     @Composable
     override fun DeviceCardContent() {
-        DeviceCard(channelAStrength = channelA.value.toFloat(), channelBStrength = channelB.value.toFloat())
+        DeviceCard(
+            channelAStrength = channelA.value.toFloat(),
+            channelBStrength = channelB.value.toFloat()
+        )
     }
 
     @Composable
-    override fun CardClickedShow( onDismissRequest: () -> Unit) {
+    override fun CardClickedShow(onDismissRequest: () -> Unit) {
         Dialog(onDismissRequest = { onDismissRequest() }) {
             ElevatedCard(
                 modifier = Modifier
@@ -165,8 +170,12 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         Spacer(Modifier.height(8.dp))
         Button(onClick = {
             activeSpeed()
-            this@DungeonLabV2.enableChanelAWave.value = AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }.toList()
-            this@DungeonLabV2.enableChanelBWave.value = AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }.toList()
+            this@DungeonLabV2.enableChanelAWave.value =
+                AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }
+                    .toList()
+            this@DungeonLabV2.enableChanelBWave.value =
+                AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }
+                    .toList()
         }) {
             Text(text = "激活速度传感器操作 ${speed.value}")
         }
@@ -176,9 +185,10 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     private fun ChannelControlUI() {
         // 通道控制UI
 
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             ChannelControl("A通道", channelA.value.toFloat())
             Spacer(Modifier.height(8.dp))
@@ -193,36 +203,48 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     @Composable
     private fun WaveformSelectorUI() {
         if (showChannelA.value) {
-            WaveformSelectorComponent(activeChannelWave = activeChannelBWave, enableChannelWave = enableChanelBWave)
+            WaveformSelectorComponent(
+                activeChannelWave = activeChannelBWave,
+                enableChannelWave = enableChanelBWave
+            )
         } else {
-            WaveformSelectorComponent(activeChannelWave = activeChannelAWave, enableChannelWave = enableChanelAWave)
+            WaveformSelectorComponent(
+                activeChannelWave = activeChannelAWave,
+                enableChannelWave = enableChanelAWave
+            )
         }
         Spacer(Modifier.height(8.dp))
     }
 
     @Composable
-    private fun WaveformSelectorComponent(activeChannelWave: MutableState<AutoWaveData.AutoWaveType>, enableChannelWave: MutableState<List<AutoWaveData.AutoWaveType>>) {
+    private fun WaveformSelectorComponent(
+        activeChannelWave: MutableState<AutoWaveData.AutoWaveType>,
+        enableChannelWave: MutableState<List<AutoWaveData.AutoWaveType>>
+    ) {
         WaveformSelector(
             activeChannelWave = activeChannelWave,
             enableChanelWave = enableChannelWave,
         ) { type ->
-            if(controlType != ControlType.HUMAN) return@WaveformSelector
+            if (controlType != ControlType.HUMAN) return@WaveformSelector
             if (type in enableChannelWave.value) {
                 enableChannelWave.value = enableChannelWave.value - type
             } else {
                 enableChannelWave.value = enableChannelWave.value + type
             }
 
-            if(activeChannelWave.value == type) {
-                if(enableChannelWave.value.isEmpty()) {
+            if (activeChannelWave.value == type) {
+                if (enableChannelWave.value.isEmpty()) {
                     activeChannelWave.value = AutoWaveData.AutoWaveType.OFF
                 } else {
                     activeChannelWave.value = enableChannelWave.value.random()
                 }
             } else {
-                activeChannelWave.value= type
+                activeChannelWave.value = type
             }
-            this.device.selectAutoWave(this.activeChannelAWave.value.data, this.activeChannelBWave.value.data)
+            this.device.selectAutoWave(
+                this.activeChannelAWave.value.data,
+                this.activeChannelBWave.value.data
+            )
         }
     }
 
@@ -254,7 +276,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
             items(waves.size - 1) { index ->
                 val wave = waves[index + 1]
                 val isActive = activeChannelWave.value == wave
-                val isEnabled = enableChanelWave.value.any { it== wave }
+                val isEnabled = enableChanelWave.value.any { it == wave }
 
                 val backgroundColor = when {
                     isActive -> MaterialTheme.colorScheme.primary
@@ -264,7 +286,10 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
                 val contentColor = MaterialTheme.colorScheme.onPrimary
                 val disabledColor = MaterialTheme.colorScheme.onSurfaceVariant
 
-                Column(modifier = Modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.padding(4.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     IconButton(
                         onClick = { onWaveSelected(wave) },
                         colors = IconButtonDefaults.iconButtonColors(
@@ -298,8 +323,8 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         Slider(
             value = strength,
             onValueChange = { fl ->
-                if(controlType != ControlType.HUMAN) return@Slider
-                if(channelName.contains("A")) {
+                if (controlType != ControlType.HUMAN) return@Slider
+                if (channelName.contains("A")) {
                     channelA.value = fl.toInt()
                     device.channelAPower = fl.toInt()
                     device.selectPower()
@@ -359,17 +384,6 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     }
 
     override fun onConnectSuccess(bleDevice: BleDevice, gatt: BluetoothGatt, status: Int) {
-        BleManager.getInstance().notify(
-            bleDevice,
-            BATTERY,
-            BATTERY_NOTIFY,
-            object : BleNotifyCallback() {
-                override fun onNotifySuccess() {}
-                override fun onNotifyFailure(exception: BleException) {}
-                override fun onCharacteristicChanged(data: ByteArray) {
-                    device.callbackBattery(data)
-                }
-            })
         BleManager.getInstance().read(
             bleDevice,
             BATTERY,
@@ -378,6 +392,7 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
                 override fun onReadSuccess(data: ByteArray) {
                     device.callbackBattery(data)
                 }
+
                 override fun onReadFailure(exception: BleException) {}
             })
         BleManager.getInstance().read(
@@ -388,7 +403,19 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
                 override fun onReadSuccess(data: ByteArray) {
                     device.callbackPower(data)
                 }
+
                 override fun onReadFailure(exception: BleException) {}
+            })
+        BleManager.getInstance().notify(
+            bleDevice,
+            BATTERY,
+            BATTERY_NOTIFY,
+            object : BleNotifyCallback() {
+                override fun onNotifySuccess() {}
+                override fun onNotifyFailure(exception: BleException) {}
+                override fun onCharacteristicChanged(data: ByteArray) {
+                    device.callbackBattery(data)
+                }
             })
     }
 

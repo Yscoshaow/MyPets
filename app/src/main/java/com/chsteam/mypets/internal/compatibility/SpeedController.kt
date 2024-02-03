@@ -22,9 +22,10 @@ interface SpeedController {
     var controlType: ControlType
 
     val locationRequest: LocationRequest
-        get() = LocationRequest.Builder(50)
+        get() = LocationRequest.Builder(1000)
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .setMinUpdateIntervalMillis(200)
+            .setMinUpdateIntervalMillis(20)
+            .setMaxUpdateDelayMillis(5000)
             .build()
 
     fun activeSpeed() {
