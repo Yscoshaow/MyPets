@@ -3,7 +3,6 @@ package com.chsteam.mypets.internal.compatibility.dungeonlab
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
 import android.content.Context
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,12 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.SouthWest
 import androidx.compose.material.icons.outlined.DeveloperMode
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -34,18 +30,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.internal.compatibility.ControlType
 import com.chsteam.mypets.internal.compatibility.Device
 import com.chsteam.mypets.internal.compatibility.Devices
-import com.chsteam.mypets.internal.compatibility.SpeedController
+import com.chsteam.mypets.internal.compatibility.controller.SpeedController
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.DGLabBLEDevice
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.OpenDGLab
 import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.AutoWaveData
@@ -60,13 +54,12 @@ import com.clj.fastble.exception.BleException
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.DelicateCoroutinesApi
-import java.lang.Math.random
-import java.util.stream.Collectors.toList
 
 
 @OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("MissingPermission")
-class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: BleDevice) : Device(context, viewModel, bleDevice), SpeedController {
+class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: BleDevice) : Device(context, viewModel, bleDevice),
+    SpeedController {
 
     companion object {
         private const val BATTERY = "955A180A-0FE2-F5AA-A094-84B8D4F3E8AD"

@@ -1,13 +1,11 @@
-package com.chsteam.mypets.internal.compatibility
+package com.chsteam.mypets.internal.compatibility.controller
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Looper
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat
+import com.chsteam.mypets.internal.compatibility.ControlType
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices

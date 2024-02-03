@@ -77,6 +77,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
     implementation("io.insert-koin:koin-android:3.5.3")
+    implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.fasterxml.jackson.core:jackson-core:2.16.1")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
 
