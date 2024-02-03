@@ -89,8 +89,8 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.speed?.let { speed ->
                     if (speed > 1f) init = true
-                    if (init && speed < 1.5f && speed > 0.2) {
-                        val value = ((1.5f - speed) * 80).toInt()
+                    if (init && speed < 2f && speed > 0.2) {
+                        val value = ((2f - speed) * 80).toInt()
                         val aRandom = (7..13).random() * value
                         val bRandom = (7..13).random() * value
                         val trueA = if (aRandom > 2047) 2047 else aRandom
