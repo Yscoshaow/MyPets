@@ -1,6 +1,7 @@
 package com.chsteam.mypets.core.id
 
 import com.chsteam.mypets.api.config.quest.QuestPackage
+import com.chsteam.mypets.core.Instruction
 import com.chsteam.mypets.core.config.QuestManager.Companion.getQuestPackage
 import java.util.Objects
 
@@ -17,6 +18,8 @@ abstract class ID(pack: QuestPackage?, val identifier: String) {
     }
 
     abstract val rawInstruction: String
+
+    protected var instruction: Instruction? = null
 
     var pack: QuestPackage
 
@@ -110,11 +113,18 @@ abstract class ID(pack: QuestPackage?, val identifier: String) {
         }
         val other = other as ID
         return (Objects.equals(identifier, other.identifier)
-                && Objects.equals(pack?.questPath, other.pack?.questPath))
+                && Objects.equals(pack.questPath, other.pack.questPath))
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(identifier, pack?.questPath)
+        return Objects.hash(identifier, pack.questPath)
+    }
+
+    fun generateInstruction(): Instruction {
+        if (instruction == null) {
+            instruction = Instruction(pack, this, rawInstruction)
+        }
+        return instruction!!
     }
 
 
