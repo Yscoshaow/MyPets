@@ -1,8 +1,6 @@
 package com.chsteam.mypets.internal.id
 
 import com.chsteam.mypets.api.config.quest.QuestPackage
-import com.chsteam.mypets.internal.Instruction
-import org.koin.core.KoinApplication.Companion.init
 
 
 class VariableID(questPackage: QuestPackage, identifier: String) : ID(questPackage, "%" + identifier.replace("%", "") + "%") {

@@ -5,6 +5,8 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import com.chsteam.mypets.api.config.quest.QuestPackage
+import com.chsteam.mypets.internal.conversation.ConversationData
+import com.chsteam.mypets.internal.id.ConversationID
 import com.chsteam.mypets.internal.permission.PermissionManager.getUriFromSharedPreferences
 import com.chsteam.mypets.internal.permission.PermissionManager.hasPersistableUriPermission
 import kotlinx.coroutines.CoroutineScope
@@ -18,9 +20,20 @@ class QuestManager(private val context: Context) {
 
     companion object {
         private const val PACK_FILE_NAME = "package.yml"
+
+        private val packages: HashMap<String, QuestPackage> = HashMap()
+
+        private val conversationData: HashMap<ConversationID, ConversationData> = HashMap()
+
+        fun getQuestPackage(name: String): QuestPackage? {
+            return packages[name]
+        }
+
+        fun getConversation(conversationID: ConversationID): ConversationData? {
+            return conversationData[conversationID]
+        }
     }
 
-    private val packages: HashMap<String, QuestPackage> = HashMap()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {

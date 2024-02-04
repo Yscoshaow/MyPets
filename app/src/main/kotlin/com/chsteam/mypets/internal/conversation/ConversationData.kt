@@ -5,15 +5,42 @@ import com.chsteam.mypets.internal.exceptions.InstructionParseException
 import com.chsteam.mypets.internal.id.ConditionID
 import com.chsteam.mypets.internal.id.ConversationID
 import com.chsteam.mypets.internal.id.EventID
-
+import com.electronwill.nightconfig.core.Config
 
 class ConversationData(
     val conversationID: ConversationID,
-    val pack: QuestPackage,
-    val convName: String,
-    val finalEvents: List<EventID>,
-    private val config: Map<String, Any>
+    private val config: Config
 ) {
+
+    /**
+     * The [QuestPackage] this conversation is in.
+     */
+    private val pack: QuestPackage = conversationID.pack
+
+    /**
+     * The name of this conversation.
+     */
+    private val convName: String = conversationID.getBaseID()
+
+    /**
+     * A map of the questers name in different languages.
+     */
+    private val quester: Map<String, String> = HashMap()
+
+    /**
+     * A map of the global conversation prefix in different languages.
+     */
+    private val prefix: Map<String, String> = HashMap()
+
+    /**
+     * All events that will be executed once the conversation has ended.
+     */
+    private val finalEvents: List<EventID> = ArrayList()
+
+    /**
+     * The NPC options that the conversation can start from.
+     */
+    private val startingOptions: List<String>
 
     /**
      * All references made by this conversation's pointers to other conversations.
@@ -33,15 +60,16 @@ class ConversationData(
     private var playerOptions: HashMap<String, ConversationOption> = hashMapOf()
 
     init {
-        if(config["quester"] == null) {
+        if(config.get<String>("quester")== null) {
             throw InstructionParseException("The 'quester' name is missing in the conversation file!");
         }
+        this.startingOptions = config.get("first")
 
-
+        loadNPCOptions(config.get("NPC_options"))
+        loadPlayerOptions(config.get("player_options"))
     }
 
-    private fun loadNPCOptions(conv: Map<String, Any>) {
-        val npcSection: Map<String, Any> = conv["NPC_options"] as Map<String, Any>
+    private fun loadNPCOptions(npcSection: Map<String, Any>) {
         npcSection.forEach {
             npcOptions[it.key] = ConversationOption(
                 this.conversationID,
@@ -52,8 +80,7 @@ class ConversationData(
         }
     }
 
-    private fun loadPlayerOptions(conv: Map<String, Any>) {
-        val playerSection: Map<String, Any> = conv["player_options"] as Map<String, Any>
+    private fun loadPlayerOptions(playerSection: Map<String, Any>) {
         playerSection.forEach {
             playerOptions[it.key] = ConversationOption(
                 this.conversationID,
