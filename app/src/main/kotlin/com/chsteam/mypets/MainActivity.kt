@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.chsteam.mypets.internal.bluetooth.PetsBluetooth
-import com.chsteam.mypets.internal.loader.QuestLoader
+import com.chsteam.mypets.internal.config.QuestManager
 import com.chsteam.mypets.pages.PageManager
 import com.chsteam.mypets.ui.theme.MyPetsTheme
 import com.clj.fastble.BleManager
@@ -25,6 +25,8 @@ class MainActivity : ComponentActivity() {
         PetsBluetooth(this.applicationContext)
     }
 
+    lateinit var questManager: QuestManager
+
     init {
         INSTANCE = this
     }
@@ -33,6 +35,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         petsBluetooth.enableBluetooth(this)
         BleManager.getInstance().init(application)
+        questManager = QuestManager(this.applicationContext)
         setContent {
             MyPetsTheme {
                 Surface(
@@ -41,17 +44,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     PageManager.Main()
                 }
-            }
-        }
-        QuestLoader.traverseAssets(this.applicationContext)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            val directoryUri = data?.data
-            if (directoryUri != null) {
-                QuestLoader.traverseDirectory(this, directoryUri)
             }
         }
     }

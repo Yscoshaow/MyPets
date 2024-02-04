@@ -3,6 +3,7 @@ package com.chsteam.mypets.internal.permission
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
@@ -48,6 +49,28 @@ object PermissionManager {
 
         if (permissionsToRequest.isNotEmpty()) {
             launcher.launch(permissionsToRequest)
+        }
+    }
+
+    fun saveUriToSharedPreferences(context: Context, uri: Uri) {
+        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            putString("selected_directory_uri", uri.toString())
+            apply()
+        }
+    }
+
+    fun getUriFromSharedPreferences(context: Context): Uri? {
+        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
+        val uriString = sharedPreferences.getString("selected_directory_uri", null)
+        return uriString?.let { Uri.parse(it) }
+    }
+
+    fun hasPersistableUriPermission(context: Context, uriToCheck: Uri?): Boolean {
+        if(uriToCheck == null) return false
+        val persistedUriPermissions = context.contentResolver.persistedUriPermissions
+        return persistedUriPermissions.any {
+            it.uri == uriToCheck && it.isReadPermission && it.isWritePermission
         }
     }
 }

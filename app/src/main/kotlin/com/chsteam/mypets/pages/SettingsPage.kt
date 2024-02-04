@@ -42,6 +42,9 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.chsteam.mypets.internal.permission.PermissionManager
+import com.chsteam.mypets.internal.permission.PermissionManager.getUriFromSharedPreferences
+import com.chsteam.mypets.internal.permission.PermissionManager.hasPersistableUriPermission
+import com.chsteam.mypets.internal.permission.PermissionManager.saveUriToSharedPreferences
 
 class SettingsPage : Page {
 
@@ -306,28 +309,6 @@ class SettingsPage : Page {
         with(sharedPreferences.edit()) {
             putBoolean("default_quest", isLoadDefaultQuest)
             apply()
-        }
-    }
-
-    private fun saveUriToSharedPreferences(context: Context, uri: Uri) {
-        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
-        with(sharedPreferences.edit()) {
-            putString("selected_directory_uri", uri.toString())
-            apply()
-        }
-    }
-
-    private fun getUriFromSharedPreferences(context: Context): Uri? {
-        val sharedPreferences = context.getSharedPreferences("mypets_settings", Context.MODE_PRIVATE)
-        val uriString = sharedPreferences.getString("selected_directory_uri", null)
-        return uriString?.let { Uri.parse(it) }
-    }
-
-    private fun hasPersistableUriPermission(context: Context, uriToCheck: Uri?): Boolean {
-        if(uriToCheck == null) return false
-        val persistedUriPermissions = context.contentResolver.persistedUriPermissions
-        return persistedUriPermissions.any {
-            it.uri == uriToCheck && it.isReadPermission && it.isWritePermission
         }
     }
 }
