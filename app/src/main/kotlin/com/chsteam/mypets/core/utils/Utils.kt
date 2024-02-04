@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.chsteam.mypets.api.config.quest.QuestPackage
+import net.objecthunter.exp4j.ExpressionBuilder
 import java.io.ByteArrayOutputStream
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -41,4 +42,16 @@ fun convertImageToBase64(context: Context, assetFileName: String): String {
     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
     val byteArray = outputStream.toByteArray()
     return Base64.encode(byteArray)
+}
+
+fun calculateExpression(expression: String, variables: Map<String, Double>): Double {
+    val expressionBuilder = ExpressionBuilder(expression)
+    variables.forEach { (variable, value) ->
+        expressionBuilder.variable(variable)
+    }
+    val finalExpression = expressionBuilder.build()
+    variables.forEach { (variable, value) ->
+        finalExpression.setVariable(variable, value)
+    }
+    return finalExpression.evaluate()
 }

@@ -81,11 +81,12 @@ class ExperimentalPage : Page, KoinComponent {
         val context = LocalContext.current
         var dungeonLabV2 = expViewModel.speedController.value
 
-        var selectedOption by remember { if(dungeonLabV2 == null) {
-            mutableStateOf("")
-        } else {
-            mutableStateOf(dungeonLabV2!!.deviceName.value)
-        }
+        var selectedOption by remember {
+            if(dungeonLabV2 == null) {
+                mutableStateOf("")
+            } else {
+                mutableStateOf(dungeonLabV2!!.deviceName.value)
+            }
         }
 
         ElevatedCard(
@@ -97,14 +98,31 @@ class ExperimentalPage : Page, KoinComponent {
                 Text(text = "步速小游戏", style = MaterialTheme.typography.displaySmall)
                 Spacer(Modifier.height(12.dp))
 
-                TextField(value = "开启本游戏后，你需要保持步速达到2m/s, 不然就会遭到郊狼电击哦. 你当前的速度是 ${dungeonLabV2?.speed?.value?: 0f}", onValueChange = {}, readOnly = true)
+                TextField(value = "开启本游戏后，你需要保持步速达到一定速度, 不然就会根据设定好的公式电击哦. 你当前的速度是 ${dungeonLabV2?.speed?.value?: 0f}", onValueChange = {}, readOnly = true)
                 Spacer(Modifier.height(12.dp))
                 Column {
                     TextField(
                         modifier = Modifier.fillMaxWidth(1f),
+                        value = dungeonLabV2?.channelASpeedCalc?.value ?: "", 
+                        onValueChange = {
+                            dungeonLabV2?.channelASpeedCalc?.value = it
+                        },
+                        label = { Text(text = "通道A计算公式")}
+                    )
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(1f),
+                        value = dungeonLabV2?.channelBSpeedCalc?.value ?: "",
+                        onValueChange = {
+                            dungeonLabV2?.channelBSpeedCalc?.value = it
+                        },
+                        label = { Text(text = "通道B计算公式")}
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(1f),
                         value = selectedOption,
                         onValueChange = {  },
-                        label = { Text("设备类型") },
+                        label = { Text("设备选择") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text
                         ),

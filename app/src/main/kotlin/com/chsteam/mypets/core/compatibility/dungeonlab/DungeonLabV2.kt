@@ -44,6 +44,7 @@ import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.OpenDGLab
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.AutoWaveData
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.WaveData
 import com.chsteam.mypets.core.schedule.CoroutineTimer
+import com.chsteam.mypets.core.utils.calculateExpression
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleNotifyCallback
 import com.clj.fastble.callback.BleReadCallback
@@ -55,7 +56,6 @@ import com.google.android.gms.location.LocationResult
 import kotlinx.coroutines.DelicateCoroutinesApi
 
 
-@OptIn(DelicateCoroutinesApi::class)
 @SuppressLint("MissingPermission")
 class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: BleDevice) : Device(context, viewModel, bleDevice),
     SpeedController {
@@ -75,23 +75,32 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
     override val tickRate: Int
         get() = 10
 
+
+    val channelASpeedCalc = mutableStateOf("(speed - 2) * 800")
+    val channelBSpeedCalc = mutableStateOf("(speed - 2) * 800")
+
     override val locationCallback: LocationCallback
         get() = object : LocationCallback() {
             var init = false
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.speed?.let { speed ->
+                    val variables = mapOf("speed" to speed.toDouble())
+                    val aPower = calculateExpression(channelASpeedCalc.value, variables)
+                    val bPower = calculateExpression(channelASpeedCalc.value, variables)
                     if (speed > 1f) init = true
-                    if (init && speed < 2f && speed > 0.2) {
-                        val value = ((2f - speed) * 80).toInt()
-                        val aRandom = (7..13).random() * value
-                        val bRandom = (7..13).random() * value
-                        val trueA = if (aRandom > 2047) 2047 else aRandom
-                        val trueB = if (bRandom > 2047) 2047 else bRandom
-                        channelA.value = trueA
-                        channelB.value = trueB
-                        this@DungeonLabV2.device.channelAPower = trueA
-                        this@DungeonLabV2.device.channelBPower = trueB
-                        this@DungeonLabV2.device.selectPower()
+                    if(init) {
+                        if(aPower > 0 && speed > 0.2) {
+                            val trueA = if (aPower > 2047) 2047 else aPower.toInt()
+                            channelA.value = trueA
+                            this@DungeonLabV2.device.channelAPower = trueA
+                            this@DungeonLabV2.device.selectPower()
+                        }
+                        if(bPower > 0 && speed > 0.2)  {
+                            val trueB = if (bPower > 2047) 2047 else bPower.toInt()
+                            channelA.value = trueB
+                            this@DungeonLabV2.device.channelAPower = trueB
+                            this@DungeonLabV2.device.selectPower()
+                        }
                     }
                     this@DungeonLabV2.speed.value = speed
                 }
