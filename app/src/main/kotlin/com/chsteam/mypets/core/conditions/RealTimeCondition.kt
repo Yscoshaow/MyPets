@@ -19,7 +19,7 @@ class RealTimeCondition(instruction: Instruction) : Condition(instruction) {
     init {
         val theTime = instruction.next()!!.split("-".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         if (theTime.size != 2) {
-            throw InstructionParseException("Wrong time format");
+            throw InstructionParseException("Wrong time format")
         }
         try {
             val timeMin: Array<String> = theTime[0].split(":").toTypedArray()

@@ -3,6 +3,7 @@ package com.chsteam.mypets.core
 import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.api.Objective
 import com.chsteam.mypets.core.conditions.RealTimeCondition
+import com.chsteam.mypets.core.conditions.TagCondition
 import com.chsteam.mypets.core.objectives.SelfObjective
 import com.chsteam.mypets.core.objectives.ShockObjective
 
@@ -15,6 +16,7 @@ object Registries {
 
     init {
         registerConditions("time", RealTimeCondition::class.java)
+        registerConditions("tag", TagCondition::class.java)
 
         registerObjectives("self", SelfObjective::class.java)
         registerObjectives("shock", ShockObjective::class.java)
