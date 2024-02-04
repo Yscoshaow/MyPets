@@ -84,11 +84,11 @@ class DungeonLabV2(context: Context, viewModel: BluetoothViewModel, bleDevice: B
             var init = false
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.speed?.let { speed ->
-                    val variables = mapOf("speed" to speed.toDouble())
-                    val aPower = calculateExpression(channelASpeedCalc.value, variables)
-                    val bPower = calculateExpression(channelASpeedCalc.value, variables)
                     if (speed > 1f) init = true
                     if(init) {
+                        val variables = mapOf("speed" to speed.toDouble())
+                        val aPower = calculateExpression(channelASpeedCalc.value, variables)
+                        val bPower = calculateExpression(channelASpeedCalc.value, variables)
                         if(aPower > 0 && speed > 0.2) {
                             val trueA = if (aPower > 2047) 2047 else aPower.toInt()
                             channelA.value = trueA

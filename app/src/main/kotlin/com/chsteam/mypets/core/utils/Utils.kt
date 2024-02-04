@@ -45,13 +45,17 @@ fun convertImageToBase64(context: Context, assetFileName: String): String {
 }
 
 fun calculateExpression(expression: String, variables: Map<String, Double>): Double {
-    val expressionBuilder = ExpressionBuilder(expression)
-    variables.forEach { (variable, value) ->
-        expressionBuilder.variable(variable)
+    return try {
+        val expressionBuilder = ExpressionBuilder(expression)
+        variables.forEach { (variable, value) ->
+            expressionBuilder.variable(variable)
+        }
+        val finalExpression = expressionBuilder.build()
+        variables.forEach { (variable, value) ->
+            finalExpression.setVariable(variable, value)
+        }
+        finalExpression.evaluate()
+    } catch (e: Exception) {
+        0.0
     }
-    val finalExpression = expressionBuilder.build()
-    variables.forEach { (variable, value) ->
-        finalExpression.setVariable(variable, value)
-    }
-    return finalExpression.evaluate()
 }
