@@ -4,7 +4,7 @@ import com.chsteam.mypets.api.config.quest.QuestPackage
 import java.util.Objects
 
 
-abstract class ID(var pack: QuestPackage, private val identifier: String) {
+abstract class ID(var pack: QuestPackage, val identifier: String) {
 
     companion object {
         const val UP_STR = "_"
@@ -15,7 +15,7 @@ abstract class ID(var pack: QuestPackage, private val identifier: String) {
         )
     }
 
-    private val rawInstruction: String? = null
+    abstract val rawInstruction: String
 
     init {
         if(identifier.contains(".")) {
@@ -35,11 +35,11 @@ abstract class ID(var pack: QuestPackage, private val identifier: String) {
         }
     }
 
-    fun getBaseID(): String {
-        return identifier;
+    open fun getBaseID(): String {
+        return identifier
     }
 
-    fun getFullID(): String {
+    open fun getFullID(): String {
         return pack.packName + "." + identifier
     }
 
