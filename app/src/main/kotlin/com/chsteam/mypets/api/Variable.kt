@@ -1,6 +1,6 @@
 package com.chsteam.mypets.api
 
-import com.chsteam.mypets.internal.Instruction
+import com.chsteam.mypets.core.Instruction
 
 class Variable(val instruction: Instruction) {
 

@@ -1,7 +1,7 @@
 package com.chsteam.mypets.api
 
-import com.chsteam.mypets.internal.Instruction
-import com.chsteam.mypets.internal.id.ConditionID
+import com.chsteam.mypets.core.Instruction
+import com.chsteam.mypets.core.id.ConditionID
 
 
 abstract class QuestEvent(val instruction: Instruction) {

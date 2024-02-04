@@ -34,14 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.chsteam.mypets.internal.bluetooth.BluetoothViewModel
-import com.chsteam.mypets.internal.compatibility.ControlType
-import com.chsteam.mypets.internal.compatibility.Devices
-import com.chsteam.mypets.internal.compatibility.dungeonlab.DungeonLabV2
-import com.chsteam.mypets.internal.compatibility.dungeonlab.opendglab.data.AutoWaveData
-import com.chsteam.mypets.internal.experimental.ExperimentalViewModel
+import com.chsteam.mypets.core.bluetooth.BluetoothViewModel
+import com.chsteam.mypets.core.compatibility.ControlType
+import com.chsteam.mypets.core.compatibility.Devices
+import com.chsteam.mypets.core.compatibility.dungeonlab.DungeonLabV2
+import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.AutoWaveData
+import com.chsteam.mypets.core.experimental.ExperimentalViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

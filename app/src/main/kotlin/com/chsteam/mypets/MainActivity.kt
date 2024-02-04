@@ -1,7 +1,5 @@
 package com.chsteam.mypets
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.chsteam.mypets.internal.bluetooth.PetsBluetooth
-import com.chsteam.mypets.internal.config.QuestManager
+import com.chsteam.mypets.core.bluetooth.PetsBluetooth
+import com.chsteam.mypets.core.config.QuestManager
 import com.chsteam.mypets.pages.PageManager
 import com.chsteam.mypets.ui.theme.MyPetsTheme
 import com.clj.fastble.BleManager

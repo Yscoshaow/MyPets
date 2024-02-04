@@ -2,7 +2,6 @@ package com.chsteam.mypets.pages
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,15 +34,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.chsteam.mypets.internal.permission.PermissionManager
-import com.chsteam.mypets.internal.permission.PermissionManager.getUriFromSharedPreferences
-import com.chsteam.mypets.internal.permission.PermissionManager.hasPersistableUriPermission
-import com.chsteam.mypets.internal.permission.PermissionManager.saveUriToSharedPreferences
+import com.chsteam.mypets.core.permission.PermissionManager
+import com.chsteam.mypets.core.permission.PermissionManager.getUriFromSharedPreferences
+import com.chsteam.mypets.core.permission.PermissionManager.hasPersistableUriPermission
+import com.chsteam.mypets.core.permission.PermissionManager.saveUriToSharedPreferences
 
 class SettingsPage : Page {
 

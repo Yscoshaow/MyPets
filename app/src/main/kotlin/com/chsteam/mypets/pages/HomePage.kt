@@ -1,7 +1,6 @@
 package com.chsteam.mypets.pages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,10 +53,9 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.chsteam.mypets.internal.database.ChatViewModel
-import com.chsteam.mypets.internal.database.Message
-import com.chsteam.mypets.internal.database.Npc
-import com.chsteam.mypets.pages.Utils.loadAvatarFromAssets
+import com.chsteam.mypets.core.database.ChatViewModel
+import com.chsteam.mypets.core.database.Message
+import com.chsteam.mypets.core.database.Npc
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.Date

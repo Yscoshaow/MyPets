@@ -41,8 +41,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.chsteam.mypets.internal.database.ChatViewModel
-import com.chsteam.mypets.internal.database.Message
+import com.chsteam.mypets.core.database.ChatViewModel
+import com.chsteam.mypets.core.database.Message
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

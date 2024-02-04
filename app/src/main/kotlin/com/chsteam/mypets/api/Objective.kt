@@ -1,9 +1,9 @@
 package com.chsteam.mypets.api
 
 import androidx.compose.runtime.Composable
-import com.chsteam.mypets.internal.Instruction
-import com.chsteam.mypets.internal.id.ConditionID
-import com.chsteam.mypets.internal.id.EventID
+import com.chsteam.mypets.core.Instruction
+import com.chsteam.mypets.core.id.ConditionID
+import com.chsteam.mypets.core.id.EventID
 
 
 abstract class Objective(val instruction: Instruction) {
