@@ -51,4 +51,35 @@ object Utils {
             )
         }
     }
+
+    @Composable
+    fun loadPictureFromAssets(assetPath: String, modifier: Modifier = Modifier) {
+
+        val path = if(assetPath.startsWith("file:///storage")) {
+            Uri.parse(assetPath)
+        } else {
+            "file:///android_asset/$assetPath"
+        }
+
+        BoxWithConstraints {
+            SubcomposeAsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(path)
+                    .build(),
+                contentDescription = null,
+                modifier = modifier,
+                contentScale = ContentScale.Crop,
+                loading = {
+                    Box(contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                },
+                error = {
+                    Box(contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+            )
+        }
+    }
 }

@@ -6,13 +6,10 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import java.io.IOException
 
 object QuestLoader {
 
-    private val JACKSON_YAML = ObjectMapper(YAMLFactory())
 
     private fun processYamlData(data: Map<String, Any>) {
 
@@ -44,8 +41,6 @@ object QuestLoader {
             if (assets.isEmpty()) {
                 if(path.endsWith(".yml")) {
                     val inputStream = context.assets.open(path)
-                    val data: Map<String, Any> = JACKSON_YAML.readValue(inputStream, Map::class.java) as Map<String, Any>
-                    processYamlData(data)
                 }
             } else {
                 for (asset in assets) {
@@ -60,8 +55,6 @@ object QuestLoader {
     private fun processYmlFileWithJackson(context: Context, uri: Uri) {
         try {
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                val data: Map<String, Any> = JACKSON_YAML.readValue(inputStream, Map::class.java) as Map<String, Any>
-                processYamlData(data)
             }
         } catch (e: Exception) {
             e.printStackTrace()

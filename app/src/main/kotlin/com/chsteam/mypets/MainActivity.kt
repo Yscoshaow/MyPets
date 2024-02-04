@@ -1,10 +1,7 @@
 package com.chsteam.mypets
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.hardware.SensorListener
-import android.hardware.SensorManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

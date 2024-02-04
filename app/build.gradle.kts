@@ -81,8 +81,13 @@ dependencies {
     implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.16.1")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
+    implementation("org.yaml:snakeyaml:2.2")
+    implementation("com.electronwill.night-config:core_android:3.6.6")
+    implementation("com.electronwill.night-config:yaml_android:3.6.6")
+    implementation("com.electronwill.night-config:json_android:3.6.6")
+    implementation("com.electronwill.night-config:hocon_android:3.6.6")
+    implementation("com.electronwill.night-config:toml_android:3.6.6")
+
 
 
 

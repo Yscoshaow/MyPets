@@ -28,6 +28,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Update
+import com.chsteam.mypets.pages.Utils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,8 +54,6 @@ data class Post(
 
     @Ignore
     private var npc: MutableStateFlow<Npc?> = MutableStateFlow(null)
-    @Ignore
-    private var imageBitmaps: MutableStateFlow<List<ImageBitmap>> = MutableStateFlow(emptyList())
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -62,22 +61,8 @@ data class Post(
                 npc.emit(it)
             }
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            imageBitmaps.emit(getPostImageBitmap())
-        }
     }
-
-    @OptIn(ExperimentalEncodingApi::class)
-    suspend fun getPostImageBitmap(): List<ImageBitmap> = withContext(Dispatchers.IO) {
-        try {
-            picture.mapNotNull { base64String ->
-                val bytes = Base64.decode(base64String)
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)?.asImageBitmap()
-            }
-        } catch (e: Exception) {
-            emptyList()
-        }
-    }
+    
 
     private suspend fun getNPC() : Npc? {
         return npcDao.getNpcById(this.from)
@@ -86,7 +71,6 @@ data class Post(
     @Composable
     fun PostCard() {
         val npcData by npc.collectAsState()
-        val images by imageBitmaps.collectAsState()
         if (npcData != null) {
             ElevatedCard {
                 Column {
@@ -99,11 +83,8 @@ data class Post(
                         Spacer(modifier = Modifier.height(8.dp))
                         LazyColumn {
                             item {
-                                images.forEach {
-                                    Image(
-                                        bitmap = it,
-                                        contentDescription = "Post Picture"
-                                    )
+                                picture.forEach { 
+                                    Utils.loadPictureFromAssets(assetPath = it)
                                 }
                             }
                         }
