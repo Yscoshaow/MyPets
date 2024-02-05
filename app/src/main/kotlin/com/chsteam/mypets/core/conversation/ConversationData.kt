@@ -60,9 +60,6 @@ class ConversationData(
     private var playerOptions: HashMap<String, ConversationOption> = hashMapOf()
 
     init {
-        if(config.get<String>("quester")== null) {
-            throw InstructionParseException("The 'quester' name is missing in the conversation file!");
-        }
         this.startingOptions = config.get("first")
 
         loadNPCOptions(config.get("NPC_options"))

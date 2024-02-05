@@ -7,6 +7,10 @@ import com.chsteam.mypets.core.conditions.RealTimeCondition
 import com.chsteam.mypets.core.conditions.TagCondition
 import com.chsteam.mypets.core.events.ObjectiveEvent
 import com.chsteam.mypets.core.events.RunEvent
+import com.chsteam.mypets.core.events.conversation.ConversationEvent
+import com.chsteam.mypets.core.events.logic.FirstEvent
+import com.chsteam.mypets.core.events.logic.IfElseEvent
+import com.chsteam.mypets.core.events.tag.TagEvent
 import com.chsteam.mypets.core.objectives.SelfObjective
 import com.chsteam.mypets.core.objectives.ShockObjective
 
@@ -19,6 +23,10 @@ object Registries {
     private val EVENT_TYPES: HashMap<String, Class<out Event>> = HashMap()
 
     init {
+        registerEvents("conversation", ConversationEvent::class.java)
+        registerEvents("tag", TagEvent::class.java)
+        registerEvents("first", FirstEvent::class.java)
+        registerEvents("ifelse", IfElseEvent::class.java)
         registerEvents("objective", ObjectiveEvent::class.java)
         registerEvents("run", RunEvent::class.java)
 

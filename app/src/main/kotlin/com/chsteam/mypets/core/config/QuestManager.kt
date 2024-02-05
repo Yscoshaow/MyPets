@@ -66,43 +66,69 @@ class QuestManager(private val context: Context) {
             searchForPackages()
 
             packages.values.forEach {
-                loadAllDataFromPackage(it)
+                loadAllDataFromPackage(it, LoaderType.EVENTS)
+            }
+            packages.values.forEach {
+                loadAllDataFromPackage(it, LoaderType.CONDITIONS)
+            }
+            packages.values.forEach {
+                loadAllDataFromPackage(it, LoaderType.OBJECTIVES)
+            }
+            packages.values.forEach {
+                loadAllDataFromPackage(it, LoaderType.CONVERSATION)
             }
         }
     }
 
-    private suspend fun loadAllDataFromPackage(pack: QuestPackage) {
+    private suspend fun loadAllDataFromPackage(pack: QuestPackage, loaderType: LoaderType) {
         withContext(Dispatchers.IO) {
             val path = pack.questPath
             if(path.contains(":///")) {
-                traverseAllData(pack, Uri.parse(path))
+                traverseAllData(pack, Uri.parse(path), loaderType)
             } else {
-                traverseAllData(pack, path)
+                traverseAllData(pack, path, loaderType)
             }
         }
     }
 
-    private fun parserData(pack: QuestPackage, config: ConfigAccessorImpl) {
+    private fun parserData(pack: QuestPackage, config: ConfigAccessorImpl, loaderType: LoaderType) {
         val config = config.config
 
-        val events: Config? = config.get<Config>("events")
-        val conditions: Config? = config.get<Config>("conditions")
-        val objectives: Config? = config.get<Config>("objectives")
-        val conversations: Config? = config.get<Config>("conversations")
+        when(loaderType) {
+            LoaderType.EVENTS -> {
+                val events: Config? = config.get<Config>("events")
+                events?.let {
+                    parserEvents(pack, it)
+                }
+            }
+            LoaderType.CONDITIONS -> {
+                val conditions: Config? = config.get<Config>("conditions")
+                conditions?.let {
+                    parserConditions(pack, it)
+                }
+            }
+            LoaderType.CONVERSATION -> {
+                val conversations: Config? = config.get<Config>("conversations")
+                conversations?.let {
+                    parserConversations(pack, it)
+                }
+            }
+            LoaderType.OBJECTIVES -> {
+                val objectives: Config? = config.get<Config>("objectives")
+                objectives?.let {
+                    parserObjectives(pack, it)
+                }
+            }
 
-        events?.let {
-            parserEvents(pack, it)
-        }
-        conditions?.let {
-            parserConditions(pack, it)
-        }
-        objectives?.let {
-            parserObjectives(pack, it)
         }
     }
 
     private fun parserConversations(pack: QuestPackage, config: Config) {
-        
+        config.valueMap().keys.forEach {
+            val conversationID = ConversationID(pack, it)
+            val conversationData = ConversationData(conversationID, config.get(it))
+        }
+
     }
 
     private fun parserEvents(pack: QuestPackage, config: Config) {
@@ -135,35 +161,35 @@ class QuestManager(private val context: Context) {
         }
     }
 
-    private fun traverseAllData(pack: QuestPackage, uri: Uri) {
+    private fun traverseAllData(pack: QuestPackage, uri: Uri, loaderType: LoaderType) {
         val documentFile = DocumentFile.fromTreeUri(context, uri)
         documentFile?.let { directory ->
             for (file in directory.listFiles()) {
                 if (file.isDirectory) {
-                    traverseAllData(pack, file.uri)
+                    traverseAllData(pack, file.uri, loaderType)
                 } else if (file.isFile) {
                     val name = file.name ?: ""
                     if(name.endsWith(".yml")) {
                         val config = ConfigAccessorImpl(context, uri.toString())
-                        parserData(pack, config)
+                        parserData(pack, config, loaderType)
                     }
                 }
             }
         }
     }
 
-    private fun traverseAllData(pack: QuestPackage, path: String = "") {
+    private fun traverseAllData(pack: QuestPackage, path: String = "", loaderType: LoaderType) {
         try {
             val assets = context.assets.list(path) ?: arrayOf()
             if (assets.isEmpty()) {
                 if(path.endsWith(".yml")) {
                     val config = ConfigAccessorImpl(context, path)
-                    parserData(pack, config)
+                    parserData(pack, config, loaderType)
                 }
             } else {
                 for (asset in assets) {
                     val assetPath = if (path.isEmpty()) asset else "$path/$asset"
-                    traverseAllData(pack, assetPath)
+                    traverseAllData(pack, assetPath, loaderType)
                 }
             }
         } catch (_: IOException) {

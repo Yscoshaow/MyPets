@@ -11,6 +11,18 @@ class Conversation(conversationID: ConversationID, val startingOption: String) {
 
     companion object {
         private val ACTIVE_CONVERSATIONS: ConcurrentHashMap<Npc, Conversation> = ConcurrentHashMap<Npc, Conversation>()
+
+        fun getOrCreateConversation(npc: Npc) : Conversation {
+            return if(ACTIVE_CONVERSATIONS[npc] != null) {
+                ACTIVE_CONVERSATIONS[npc]!!
+            } else {
+                val questPackage = QuestManager.getQuestPackage(npc.pack)!!
+                val conversationID = ConversationID(questPackage, npc.npcKey)
+                val conversation = Conversation(conversationID, "")
+                ACTIVE_CONVERSATIONS[npc] = conversation
+                conversation
+            }
+        }
     }
 
     private val pack: QuestPackage = conversationID.pack
