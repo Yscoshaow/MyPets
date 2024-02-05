@@ -20,29 +20,19 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
         private val NUMBER_PATTERN: Pattern = Pattern.compile("(?:\\s|\\G|^)(([+\\-])?\\d+)(?:\\s|$)")
     }
 
-    override fun toString(): String {
-        return instruction
-    }
+    override fun toString(): String = instruction
 
-    fun size(): Int {
-        return parts.size
-    }
+    fun size(): Int = parts.size
 
-    fun copy(): Instruction {
-        return Instruction(pack, identifier, instruction)
-    }
+    fun copy(): Instruction = Instruction(pack, identifier, instruction)
 
-    fun copy(newID: ObjectiveID): Instruction {
-        return Instruction(pack, newID, instruction)
-    }
+    fun copy(newID: ObjectiveID): Instruction = Instruction(pack, newID, instruction)
 
     /////////////////////
     ///    GENERAL    ///
     /////////////////////
 
-    operator fun hasNext(): Boolean {
-        return currentIndex < parts.size - 1
-    }
+    operator fun hasNext(): Boolean = currentIndex < parts.size - 1
 
     operator fun next(): String? {
         lastOptional = null
@@ -66,13 +56,9 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
         return parts[index]
     }
 
-    fun getOptional(prefix: String): String? {
-        return getOptionalArgument(prefix)
-    }
+    fun getOptional(prefix: String): String? = getOptionalArgument(prefix)
 
-    fun getOptional(prefix: String, defaultString: String): String {
-        return getOptionalArgument(prefix) ?: defaultString
-    }
+    fun getOptional(prefix: String, defaultString: String): String = getOptionalArgument(prefix) ?: defaultString
 
     fun getOptionalArgument(prefix: String): String? {
         for (part in parts) {
@@ -117,9 +103,7 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
     /////////////////
     ///    IDs    ///
     /////////////////
-    fun getEvent(): EventID? {
-        return getEvent(next())
-    }
+    fun getEvent(): EventID? = getEvent(next())
 
     fun getEvent(string: String?): EventID? {
         return if (string == null) {
@@ -129,9 +113,7 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
         }
     }
 
-    fun getCondition(): ConditionID? {
-        return getCondition(next())
-    }
+    fun getCondition(): ConditionID? = getCondition(next())
 
     fun getCondition(string: String?): ConditionID? {
         return if (string == null) {
@@ -141,11 +123,9 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
         }
     }
 
-    fun getObjective(): ObjectiveID? {
-        return getObjective(next())
-    }
+    fun getObjective(): ObjectiveID? = getNextObjective(next())
 
-    fun getObjective(string: String?): ObjectiveID? {
+    fun getNextObjective(string: String?): ObjectiveID? {
         return if (string == null) {
             null
         } else {
@@ -156,17 +136,13 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
     /////////////////////
     ///    NUMBERS    ///
     /////////////////////
-    fun getByte(): Byte {
-        return getByte(next(), 0.toByte())
-    }
+    fun getByte(): Byte = getByte(next(), 0.toByte())
 
-    fun getByte(string: String?, def: Byte): Byte {
+    private fun getByte(string: String?, def: Byte): Byte {
         return string?.toByte() ?: def
     }
 
-    fun getPositive(): Int {
-        return getPositive(next(), 0)
-    }
+    fun getPositive(): Int = getPositive(next(), 0)
 
     fun getPositive(string: String?, def: Int): Int {
         val number = getInt(string, def)
@@ -177,25 +153,19 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
         return number
     }
 
-    fun getInt(): Int {
-        return getInt(next(), 0)
-    }
+    fun getInt(): Int = getInt(next(), 0)
 
     fun getInt(string: String?, def: Int): Int {
         return string?.toInt() ?: def
     }
 
-    fun getLong(): Long {
-        return getLong(next(), 0)
-    }
+    fun getLong(): Long = getLong(next(), 0)
 
     fun getLong(string: String?, def: Long): Long {
         return string?.toLong() ?: def
     }
 
-    fun getDouble(): Double {
-        return getDouble(next(), 0.0)
-    }
+    fun getDouble(): Double = getDouble(next(), 0.0)
 
     fun getDouble(string: String?, def: Double): Double {
         return string?.toDouble() ?: def
@@ -213,9 +183,7 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
     ////////////////////
     ///    ARRAYS    ///
     ////////////////////
-    fun getArray(): Array<String?> {
-        return getArray(next())
-    }
+    fun getArray(): Array<String?> = getArray(next())
 
     fun getArray(string: String?): Array<String?> {
         return string?.split(",".toRegex())?.dropLastWhile { it.isEmpty() }?.toTypedArray()
@@ -223,18 +191,16 @@ class Instruction(val pack: QuestPackage, val identifier: ID, val instruction: S
     }
 
 
-    fun <T> getList(converter: Converter<T>): List<T>? {
-        return getList(next(), converter)
-    }
+    fun <T> getList(converter: () -> T): List<T> = getList(next(), converter)
 
-    fun <T> getList(string: String?, converter: Converter<T>): List<T> {
+   fun <T> getList(string: String?, converter: () -> T): List<T> {
         if (string == null) {
             return ArrayList(0)
         }
         val array = getArray(string)
         val list: MutableList<T> = ArrayList(array.size)
         for (part in array) {
-            list.add(converter.convert(part))
+            list.add(converter.invoke())
         }
         return list
     }

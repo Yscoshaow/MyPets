@@ -2,12 +2,10 @@ package com.chsteam.mypets.core.config
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
-import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.api.Objective
-import com.chsteam.mypets.api.QuestEvent
+import com.chsteam.mypets.api.Event
 import com.chsteam.mypets.api.Variable
 import com.chsteam.mypets.api.config.quest.QuestPackage
 import com.chsteam.mypets.core.Instruction
@@ -21,7 +19,6 @@ import com.chsteam.mypets.core.id.VariableID
 import com.chsteam.mypets.core.permission.PermissionManager.getUriFromSharedPreferences
 import com.chsteam.mypets.core.permission.PermissionManager.hasPersistableUriPermission
 import com.electronwill.nightconfig.core.Config
-import com.electronwill.nightconfig.core.file.CommentedFileConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +35,7 @@ class QuestManager(private val context: Context) {
 
         private val conversationData: HashMap<ConversationID, ConversationData> = HashMap()
 
-        private val events: HashMap<EventID, QuestEvent> = HashMap()
+        private val events: HashMap<EventID, Event> = HashMap()
 
         private val condition: HashMap<ConditionID, Condition> = HashMap()
 
@@ -52,6 +49,14 @@ class QuestManager(private val context: Context) {
 
         fun getConversation(conversationID: ConversationID): ConversationData? {
             return conversationData[conversationID]
+        }
+
+        fun getObjective(objectiveID: ObjectiveID): Objective? {
+            return objective[objectiveID]
+        }
+
+        fun getEvent(eventID: EventID): Event? {
+            return events[eventID]
         }
     }
 
@@ -96,10 +101,17 @@ class QuestManager(private val context: Context) {
         }
     }
 
+    private fun parserConversations(pack: QuestPackage, config: Config) {
+        
+    }
+
     private fun parserEvents(pack: QuestPackage, config: Config) {
         config.valueMap().keys.forEach {
             val eventID = EventID(pack, it)
             val instruction = eventID.generateInstruction()
+            val type = instruction.getPart(0) ?: return@forEach
+            val eventClass = Registries.getEventClass(type) ?: return@forEach
+            events[eventID] = eventClass.getConstructor(Instruction::class.java).newInstance(instruction)
         }
     }
 

@@ -4,7 +4,7 @@ import com.chsteam.mypets.core.Instruction
 import com.chsteam.mypets.core.id.ConditionID
 
 
-abstract class QuestEvent(val instruction: Instruction) {
+abstract class Event(val instruction: Instruction) {
 
     protected val conditions: Array<ConditionID>
 
