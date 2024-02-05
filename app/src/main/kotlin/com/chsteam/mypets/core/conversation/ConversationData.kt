@@ -1,11 +1,12 @@
 package com.chsteam.mypets.core.conversation
 
+import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.api.config.quest.QuestPackage
-import com.chsteam.mypets.core.exceptions.InstructionParseException
 import com.chsteam.mypets.core.id.ConditionID
 import com.chsteam.mypets.core.id.ConversationID
 import com.chsteam.mypets.core.id.EventID
 import com.electronwill.nightconfig.core.Config
+
 
 class ConversationData(
     val conversationID: ConversationID,
@@ -40,7 +41,7 @@ class ConversationData(
     /**
      * The NPC options that the conversation can start from.
      */
-    private val startingOptions: List<String>
+    val startingOptions: List<String>
 
     /**
      * All references made by this conversation's pointers to other conversations.
@@ -66,27 +67,39 @@ class ConversationData(
         loadPlayerOptions(config.get("player_options"))
     }
 
-    private fun loadNPCOptions(npcSection: Map<String, Any>) {
-        npcSection.forEach {
-            npcOptions[it.key] = ConversationOption(
+    private fun loadNPCOptions(npcSection: Config) {
+        npcSection.valueMap().keys.forEach {
+            npcOptions[it] = ConversationOption(
                 this.conversationID,
-                it.key,
+                it,
                 OptionType.NPC,
-                it.value as Map<String, String>
+                npcSection.get(it)
             )
         }
     }
 
-    private fun loadPlayerOptions(playerSection: Map<String, Any>) {
-        playerSection.forEach {
-            playerOptions[it.key] = ConversationOption(
+    private fun loadPlayerOptions(playerSection: Config) {
+        playerSection.valueMap().keys.forEach {
+            playerOptions[it] = ConversationOption(
                 this.conversationID,
-                it.key,
+                it,
                 OptionType.PLAYER,
-                playerSection[it.key] as Map<String, String>
+                playerSection.get(it)
             )
         }
     }
+
+    fun getPointers(option: ResolvedOption): List<String> {
+        val optionMaps: Map<String, ConversationOption>
+        optionMaps = if (option.type == OptionType.NPC) {
+            option.conversationData.npcOptions
+        } else {
+            option.conversationData.playerOptions
+        }
+        return optionMaps[option.name]!!.getPointers()
+    }
+
+
 
     enum class OptionType(val identifier: String, val readable: String) {
         /**
@@ -104,7 +117,7 @@ class ConversationData(
         val conversationID: ConversationID,
         val optionName: String,
         val optionType: OptionType,
-        val config: Map<String, String>
+        val config: Config
     ) {
 
         /**
@@ -138,5 +151,88 @@ class ConversationData(
          */
         private val events: List<EventID> = ArrayList()
 
+        /**
+         * Other options that are available after this option is selected.
+         */
+        private val pointers: List<String>
+
+        /**
+         * Other options that this option extends from.
+         */
+        private val extendLinks: List<String>
+
+        init {
+            pointers = null!!
+            extendLinks = null!!
+        }
+
+        fun getCondition(): List<ConditionID> {
+            return getConditions(mutableListOf())
+        }
+
+        fun getConditions(optionPath: MutableList<String>): List<ConditionID> {
+            if(optionPath.contains(optionName)) {
+                return emptyList()
+            }
+            optionPath.add(optionName)
+
+            val conditions = mutableListOf<ConditionID>()
+            conditions.addAll(this.conditions)
+
+            extendLinks.forEach { extend ->
+                val resolvedExtend = ConversationOptionResolver(pack, conversationName, optionType, extend).resolve()
+
+                val conversationData =  resolvedExtend.conversationData
+                // TODO
+            }
+
+            return conditions.toList()
+        }
+
+        fun getEvents(): List<EventID> {
+            return getEvents(mutableListOf())
+        }
+
+        fun getEvents(optionPath: MutableList<String>): List<EventID> {
+            if(optionPath.contains(optionName)) {
+                return emptyList()
+            }
+            optionPath.add(optionName)
+
+            val events = mutableListOf<EventID>()
+            events.addAll(this.events)
+
+            extendLinks.forEach { extend ->
+                val resolvedExtend = ConversationOptionResolver(pack, conversationName, optionType, extend).resolve()
+
+                val conversationData =  resolvedExtend.conversationData
+                // TODO
+            }
+
+            return events.toList()
+        }
+
+
+        fun getPointers(): List<String> {
+            return getPointers(mutableListOf())
+        }
+
+        fun getPointers(optionPath: MutableList<String>): List<String> {
+            if (optionPath.contains(optionName)) {
+                return emptyList()
+            }
+            optionPath.add(optionName)
+            val pointers = mutableListOf<String>()
+            pointers.addAll(this.pointers)
+
+            extendLinks.forEach { extend ->
+                val resolvedExtend = ConversationOptionResolver(pack, conversationName, optionType, extend).resolve()
+
+                val conversationData =  resolvedExtend.conversationData
+                // TODO
+            }
+
+            return pointers.toList()
+        }
     }
 }

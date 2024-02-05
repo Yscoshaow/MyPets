@@ -10,5 +10,5 @@ package com.chsteam.mypets.core.conversation
 data class ResolvedOption(
     val conversationData: ConversationData,
     val type: ConversationData.OptionType,
-    val name: String
+    val name: String?
 )

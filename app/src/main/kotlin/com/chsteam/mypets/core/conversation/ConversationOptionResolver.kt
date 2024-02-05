@@ -88,6 +88,6 @@ class ConversationOptionResolver(
 
         //Since the conversation might be in another package we must load this again
         val newData: ConversationData = ConversationManager.getConversation(conversationWithNextOption)
-        return ResolvedOption(newData, optionType, (optionName)!!)
+        return ResolvedOption(newData, optionType, optionName)
     }
 }

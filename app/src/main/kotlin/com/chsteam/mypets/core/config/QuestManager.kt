@@ -51,6 +51,10 @@ class QuestManager(private val context: Context) {
             return conversationData[conversationID]
         }
 
+        fun getCondition(conditionID: ConditionID): Condition? {
+            return condition[conditionID]
+        }
+
         fun getObjective(objectiveID: ObjectiveID): Objective? {
             return objective[objectiveID]
         }
