@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.chsteam.mypets.core.conversation.Conversation
 import com.chsteam.mypets.core.database.ChatViewModel
 import com.chsteam.mypets.core.database.Message
 import kotlinx.coroutines.launch
@@ -199,10 +200,9 @@ class ChatPage : Page, KoinComponent {
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
                 LazyColumn {
                     item {
-                        Options(text = "测试1")
-                        Options(text = "测试1")
-                        Options(text = "测试1")
-                        Options(text = "测试1")
+                        for(i in 0..viewModel.responseMessage.value.size) {
+                            Options(text = viewModel.responseMessage.value[i], number = i)
+                        }
                     }
                 }
             }
@@ -212,8 +212,14 @@ class ChatPage : Page, KoinComponent {
 
 
     @Composable
-    fun Options(text: String) {
-        Row(Modifier.fillMaxWidth(1f)) {
+    fun Options(text: String, number: Int) {
+        Row(
+            Modifier
+                .fillMaxWidth(1f)
+                .clickable {
+                    viewModel.chattingNpc.value?.let { Conversation.getOrCreateConversation(it).passPlayerAnswer(number = number) }
+                }
+        ) {
             val color = MaterialTheme.colorScheme.primary
             Text(text = text, modifier = Modifier
                 .drawBehind {

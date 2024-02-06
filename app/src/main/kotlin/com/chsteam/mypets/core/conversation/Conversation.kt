@@ -4,12 +4,17 @@ import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.api.Event
 import com.chsteam.mypets.api.config.quest.QuestPackage
 import com.chsteam.mypets.core.config.QuestManager
+import com.chsteam.mypets.core.database.ChatViewModel
+import com.chsteam.mypets.core.database.Message
 import com.chsteam.mypets.core.database.Npc
 import com.chsteam.mypets.core.id.ConversationID
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
+import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
 
-class Conversation(conversationID: ConversationID, var startingOption: List<String> = emptyList()) {
+class Conversation(conversationID: ConversationID, var startingOption: List<String> = emptyList()): KoinComponent {
 
     companion object {
         private val ACTIVE_CONVERSATIONS: ConcurrentHashMap<Npc, Conversation> = ConcurrentHashMap<Npc, Conversation>()
@@ -27,6 +32,8 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
+    val viewModel : ChatViewModel by inject()
+
     private val pack: QuestPackage = conversationID.pack
 
     private val identifier: ConversationID = conversationID
@@ -35,7 +42,7 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
 
     private val conv: Conversation? = null
 
-    private val availablePlayerOptions: Map<Int, ResolvedOption> = HashMap()
+    private val availablePlayerOptions: HashMap<Int, ResolvedOption> = HashMap()
 
     protected var nextNPCOption: ResolvedOption? = null
 
@@ -48,18 +55,24 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
 
     }
 
-    fun printNPCText() {
+    private fun printNPCText() {
         if (this.nextNPCOption != null) {
-            val text = data?.getText("default", this.nextNPCOption!!)
+            val text = data?.getText("default", this.nextNPCOption!!) ?: ""
 
             // TODO RESOLVE VARIABLES
-            // CONTROL ADD MESSAGE TO CHATTING LIST
             npcEventRun(this.nextNPCOption!!)
+            val message = Message(0, viewModel.chattingNpc.value!!.id, text, Date())
+            // TODO SAVE TO DATABASE
+            viewModel.addMessage(message)
+            optionPrint(this.nextNPCOption!!)
         }
     }
 
     fun passPlayerAnswer(number: Int) {
-        availablePlayerOptions[number]?.let { playerEventRun(it) }
+        availablePlayerOptions[number]?.let {
+            playerEventRun(it)
+            responsePrint(it)
+        }
     }
 
     private fun playerEventRun(playerOption: ResolvedOption) {
@@ -87,14 +100,18 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
     }
 
 
-    fun start(startingOption: String) {
-        val startingOptions = mutableListOf(startingOption)
+    fun start(startingOption: String?) {
+        val startingOptions = if(startingOption != null) {
+            mutableListOf(startingOption)
+        } else {
+            mutableListOf()
+        }
         if (state.isStarted) {
             return
         }
         state = ConversationState.ACTIVE
 
-        if(startingOption.isEmpty()) {
+        if(startingOptions.isEmpty() && data != null) {
             startingOptions.addAll(data!!.startingOptions)
             val resolvedOptions = resolveOptions(startingOptions)
             selectOption(resolvedOptions, false)
@@ -148,7 +165,29 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    private fun updateOptionShow(npcOption: ResolvedOption) {
+    private fun optionPrint(npcOption: ResolvedOption) {
+        printOptions(resolvePointers(npcOption));
+    }
 
+    private fun printOptions(options: List<ResolvedOption>) {
+        val allOptions: MutableList<Pair<ResolvedOption, List<Boolean>>> = mutableListOf()
+
+        options.forEach { option ->
+            val conditions: MutableList<Boolean> = mutableListOf()
+            option.conversationData.getConditionIDs(option.name ?: "", option.type).forEach { conditionID ->
+                conditions.add(Condition.condition(conditionID))
+            }
+            allOptions.add(Pair(option, conditions))
+        }
+
+        var optionsCount = 0
+
+        allOptions.forEach { option ->
+            if(!option.second.contains(false)) {
+                optionsCount++
+                availablePlayerOptions[optionsCount] = option.first
+                viewModel.addOption(data?.getText("default", option.first) ?: "")
+            }
+        }
     }
 }

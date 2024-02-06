@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.chsteam.mypets.core.conversation.Conversation
 import com.chsteam.mypets.core.database.ChatViewModel
 import com.chsteam.mypets.core.database.Message
 import com.chsteam.mypets.core.database.Npc
@@ -124,6 +125,7 @@ class HomePage : Page, KoinComponent {
         Box(modifier = Modifier.clickable {
             viewModel.chattingNpc.value = npc
             navController.navigate(Pages.CHAT.name)
+            Conversation.getOrCreateConversation(npc).start("")
         }) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()) {
                 npc.ShowAvatar(modifier = Modifier.padding(5.dp))

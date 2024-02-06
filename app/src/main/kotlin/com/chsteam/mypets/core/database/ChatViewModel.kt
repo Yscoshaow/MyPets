@@ -18,9 +18,23 @@ class ChatViewModel : ViewModel(), KoinComponent {
 
     val chattingNpc = mutableStateOf<Npc?>(null)
 
+    val responseMessage = mutableStateOf(emptyList<String>())
+
     init {
         loadLatestMessages()
     }
+
+    fun addMessage(message: Message) {
+        val messages = allMessage.value?.get(chattingNpc.value) ?: mutableListOf()
+        messages.add(message)
+        allMessage.value?.put(chattingNpc.value!!, messages)
+        allMessage.postValue(allMessage.value)
+    }
+
+    fun addOption(text: String) {
+        responseMessage.value = responseMessage.value + text
+    }
+
 
     private fun loadLatestMessages() {
         viewModelScope.launch {
