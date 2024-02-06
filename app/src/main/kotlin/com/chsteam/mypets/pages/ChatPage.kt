@@ -200,7 +200,7 @@ class ChatPage : Page, KoinComponent {
                 Spacer(modifier = Modifier.padding(vertical = 5.dp))
                 LazyColumn {
                     item {
-                        for(i in 0..viewModel.responseMessage.value.size) {
+                        for(i in 0 until  viewModel.responseMessage.value.size) {
                             Options(text = viewModel.responseMessage.value[i], number = i)
                         }
                     }
