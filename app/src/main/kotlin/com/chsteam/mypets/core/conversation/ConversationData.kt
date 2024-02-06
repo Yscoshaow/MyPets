@@ -1,6 +1,5 @@
 package com.chsteam.mypets.core.conversation
 
-import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.api.config.quest.QuestPackage
 import com.chsteam.mypets.core.id.ConditionID
 import com.chsteam.mypets.core.id.ConversationID
@@ -8,10 +7,7 @@ import com.chsteam.mypets.core.id.EventID
 import com.electronwill.nightconfig.core.Config
 
 
-class ConversationData(
-    val conversationID: ConversationID,
-    private val config: Config
-) {
+class ConversationData(val conversationID: ConversationID, config: Config) {
 
     /**
      * The [QuestPackage] this conversation is in.
@@ -90,16 +86,81 @@ class ConversationData(
     }
 
     fun getPointers(option: ResolvedOption): List<String> {
-        val optionMaps: Map<String, ConversationOption>
-        optionMaps = if (option.type == OptionType.NPC) {
+        val optionMaps: Map<String, ConversationOption> = if (option.type == OptionType.NPC) {
             option.conversationData.npcOptions
         } else {
             option.conversationData.playerOptions
         }
-        return optionMaps[option.name]!!.getPointers()
+        return optionMaps[option.name]?.getPointers() ?: emptyList()
     }
 
+    /**
+     * @return the final events
+     */
+    fun getFinalEvents(): List<EventID> {
+        return ArrayList(finalEvents)
+    }
 
+    /**
+     * Returns a list of all option names that the conversation can start from.
+     *
+     * @return a list of all option names
+     */
+    fun getStartingOptions(): List<String> {
+        return ArrayList(startingOptions)
+    }
+
+    /**
+     * Gets the text of the specified option in the specified language.
+     * <br></br>
+     * Does not respect option extends. Use [.getText] instead.
+     *
+     * @param lang   the desired language of the text
+     * @param option the option
+     * @return the text of the specified option in the specified language
+     */
+    fun getText(lang: String, option: ResolvedOption): String? {
+        val opt: ConversationOption? = if(option.type == OptionType.NPC) {
+            option.conversationData.npcOptions.get(option.name)
+        } else {
+            option.conversationData.playerOptions.get(option.name)
+        }
+        return opt?.getText(lang)
+    }
+
+    /**
+     * Gets the conditions required for the specified option to be selected.
+     *
+     * @param option the conversation option
+     * @param type   the type of the option
+     * @return the conditions required for the specified option to be selected
+     */
+    fun getConditionIDs(option: String, type: OptionType): List<ConditionID> {
+        val options: Map<String, ConversationOption> =
+            if (type == OptionType.NPC) npcOptions else playerOptions
+        return options[option]?.getConditions() ?: emptyList()
+    }
+
+    /**
+     * Gets the events that will be executed when the specified option is selected.
+     *
+     * @param profile the profile of the player
+     * @param option  the name of the conversation option
+     * @param type    the type of the option
+     * @return a list of [EventID]s
+     */
+    fun getEventIDs(option: ResolvedOption, type: OptionType): List<EventID?> {
+        val options = if (type == OptionType.NPC) {
+            option.conversationData.npcOptions
+        } else {
+            option.conversationData.playerOptions
+        }
+        return options[option.name]?.getEvents() ?: emptyList()
+    }
+
+    private fun getOption(option: String, type: OptionType): ConversationOption? {
+        return if (type == OptionType.NPC) npcOptions[option] else playerOptions[option]
+    }
 
     enum class OptionType(val identifier: String, val readable: String) {
         /**
@@ -114,10 +175,10 @@ class ConversationData(
     }
 
     private class ConversationOption(
-        val conversationID: ConversationID,
+        conversationID: ConversationID,
         val optionName: String,
         val optionType: OptionType,
-        val config: Config
+        config: Config
     ) {
 
         /**
@@ -139,17 +200,17 @@ class ConversationData(
         /**
          * A map of the text of the option in different languages.
          */
-        private val text: Map<String, String> = HashMap()
+        private val text: HashMap<String, String> = HashMap()
 
         /**
          * Conditions that must be met for the option to be available.
          */
-        private val conditions: List<ConditionID> = ArrayList()
+        private val conditions: MutableList<ConditionID> = ArrayList()
 
         /**
          * Events that are triggered when the option is selected.
          */
-        private val events: List<EventID> = ArrayList()
+        private val events: MutableList<EventID> = ArrayList()
 
         /**
          * Other options that are available after this option is selected.
@@ -162,11 +223,22 @@ class ConversationData(
         private val extendLinks: List<String>
 
         init {
-            pointers = null!!
-            extendLinks = null!!
+            pointers = config.get<String>("pointer").split(",")
+            extendLinks = config.get<String>("extends").split(",")
+            text["default"] = config.get("text")
+            events.addAll(
+                config.get<String>("events").split(",").map { EventID(pack, it) }
+            )
+            conditions.addAll(
+                config.get<String>("conditions").split(",").map { ConditionID(pack, it) }
+            )
         }
 
-        fun getCondition(): List<ConditionID> {
+        fun getText(lang: String): String? {
+            return text[lang]
+        }
+
+        fun getConditions(): List<ConditionID> {
             return getConditions(mutableListOf())
         }
 
