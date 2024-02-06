@@ -1,6 +1,7 @@
 package com.chsteam.mypets.core.conversation
 
 import com.chsteam.mypets.api.config.quest.QuestPackage
+import com.chsteam.mypets.core.config.QuestManager
 import com.chsteam.mypets.core.exceptions.InstructionParseException
 import com.chsteam.mypets.core.id.ConversationID
 
@@ -87,7 +88,7 @@ class ConversationOptionResolver(
         val conversationWithNextOption = ConversationID(pack, convName)
 
         //Since the conversation might be in another package we must load this again
-        val newData: ConversationData = ConversationManager.getConversation(conversationWithNextOption)
+        val newData: ConversationData = QuestManager.getConversation(conversationWithNextOption)!!
         return ResolvedOption(newData, optionType, optionName)
     }
 }

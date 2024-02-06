@@ -33,7 +33,7 @@ class QuestManager(private val context: Context) {
 
         private val packages: HashMap<String, QuestPackage> = HashMap()
 
-        private val conversationData: HashMap<ConversationID, ConversationData> = HashMap()
+        private val conversationDatas: HashMap<ConversationID, ConversationData> = HashMap()
 
         private val events: HashMap<EventID, Event> = HashMap()
 
@@ -48,7 +48,7 @@ class QuestManager(private val context: Context) {
         }
 
         fun getConversation(conversationID: ConversationID): ConversationData? {
-            return conversationData[conversationID]
+            return conversationDatas[conversationID]
         }
 
         fun getCondition(conditionID: ConditionID): Condition? {
@@ -131,6 +131,7 @@ class QuestManager(private val context: Context) {
         config.valueMap().keys.forEach {
             val conversationID = ConversationID(pack, it)
             val conversationData = ConversationData(conversationID, config.get(it))
+            conversationDatas[conversationID] = conversationData
         }
 
     }

@@ -115,7 +115,8 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
             val resolvedOptions = resolveOptions(startingOptions)
             selectOption(resolvedOptions, false)
         } else {
-            selectOption(startingOptions)
+            val resolvedOptions = resolveOptions(startingOptions)
+            selectOption(resolvedOptions, true)
         }
     }
 
