@@ -214,15 +214,19 @@ class ConversationData(val conversationID: ConversationID, config: Config) {
         private val extendLinks: List<String>
 
         init {
-            pointers = config.get<String?>("pointer").split(",")
-            extendLinks = config.get<String?>("extends").split(",")
+            pointers = config.get<String?>("pointer")?.split(",") ?: emptyList()
+            extendLinks = config.get<String?>("extends")?.split(",") ?: emptyList()
             text["default"] = config.get("text")
-            events.addAll(
-                config.get<String?>("events").split(",").map { EventID(pack, it) }
-            )
-            conditions.addAll(
-                config.get<String?>("conditions").split(",").map { ConditionID(pack, it) }
-            )
+            config.get<String?>("events")?.split(",")?.map { EventID(pack, it) }?.let {
+                events.addAll(
+                    it
+                )
+            }
+            config.get<String?>("conditions")?.split(",")?.map { ConditionID(pack, it) }?.let {
+                conditions.addAll(
+                    it
+                )
+            }
         }
 
         fun getText(lang: String): String? {
