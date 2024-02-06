@@ -44,10 +44,9 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
 
     private val availablePlayerOptions: HashMap<Int, ResolvedOption> = HashMap()
 
-    protected var nextNPCOption: ResolvedOption? = null
+    private var nextNPCOption: ResolvedOption? = null
 
-    @Volatile
-    protected var state = ConversationState.CREATED
+    private var state = ConversationState.CREATED
 
     private var data: ConversationData? = QuestManager.getConversation(conversationID)
 
@@ -83,7 +82,7 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    fun responsePrint(playerOption: ResolvedOption) {
+    private fun responsePrint(playerOption: ResolvedOption) {
         selectOption(resolvePointers(playerOption), false)
         printNPCText()
     }

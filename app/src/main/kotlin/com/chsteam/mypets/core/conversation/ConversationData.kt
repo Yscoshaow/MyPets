@@ -57,7 +57,7 @@ class ConversationData(val conversationID: ConversationID, config: Config) {
     private var playerOptions: HashMap<String, ConversationOption> = hashMapOf()
 
     init {
-        this.startingOptions = config.get("first")
+        this.startingOptions = config.get<String>("first").split(",")
 
         loadNPCOptions(config.get("NPC_options"))
         loadPlayerOptions(config.get("player_options"))
@@ -99,15 +99,6 @@ class ConversationData(val conversationID: ConversationID, config: Config) {
      */
     fun getFinalEvents(): List<EventID> {
         return ArrayList(finalEvents)
-    }
-
-    /**
-     * Returns a list of all option names that the conversation can start from.
-     *
-     * @return a list of all option names
-     */
-    fun getStartingOptions(): List<String> {
-        return ArrayList(startingOptions)
     }
 
     /**
@@ -223,14 +214,14 @@ class ConversationData(val conversationID: ConversationID, config: Config) {
         private val extendLinks: List<String>
 
         init {
-            pointers = config.get<String>("pointer").split(",")
-            extendLinks = config.get<String>("extends").split(",")
+            pointers = config.get<String?>("pointer").split(",")
+            extendLinks = config.get<String?>("extends").split(",")
             text["default"] = config.get("text")
             events.addAll(
-                config.get<String>("events").split(",").map { EventID(pack, it) }
+                config.get<String?>("events").split(",").map { EventID(pack, it) }
             )
             conditions.addAll(
-                config.get<String>("conditions").split(",").map { ConditionID(pack, it) }
+                config.get<String?>("conditions").split(",").map { ConditionID(pack, it) }
             )
         }
 
