@@ -115,8 +115,8 @@ class QuestManager(private val context: Context) {
         }
     }
 
-    private fun parserData(pack: QuestPackage, config: ConfigAccessorImpl, loaderType: LoaderType) {
-        val config = config.config
+    private fun parserData(pack: QuestPackage, configAccessor: ConfigAccessorImpl, loaderType: LoaderType) {
+        val config = configAccessor.config
 
         when(loaderType) {
             LoaderType.EVENTS -> {
@@ -229,7 +229,7 @@ class QuestManager(private val context: Context) {
         }
     }
 
-    suspend fun searchForPackages() {
+    private suspend fun searchForPackages() {
         withContext(Dispatchers.IO) {
             val uri = getUriFromSharedPreferences(context)
             val permission = hasPersistableUriPermission(context, uri)
@@ -253,8 +253,8 @@ class QuestManager(private val context: Context) {
                     val name = file.name ?: ""
                     if (name == "") {
                         val config = ConfigAccessorImpl(context, uri.toString())
-                        val name = config.config.get<String>("package.name")
-                        PACKAGES[name] = QuestPackage(name, uri.toString().replace("/$PACK_FILE_NAME", ""))
+                        val packName = config.config.get<String>("package.name")
+                        PACKAGES[packName] = QuestPackage(packName, uri.toString().replace("/$PACK_FILE_NAME", ""))
                     }
                 }
             }
