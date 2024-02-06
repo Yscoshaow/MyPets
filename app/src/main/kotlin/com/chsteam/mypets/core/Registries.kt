@@ -13,28 +13,29 @@ import com.chsteam.mypets.core.events.logic.IfElseEvent
 import com.chsteam.mypets.core.events.tag.TagEvent
 import com.chsteam.mypets.core.objectives.SelfObjective
 import com.chsteam.mypets.core.objectives.ShockObjective
+import kotlin.reflect.KClass
 
 
 object Registries {
 
-    private val CONDITION_TYPES: HashMap<String, Class<out Condition>> = HashMap()
+    private val CONDITION_TYPES: HashMap<String, KClass<out Condition>> = HashMap()
 
-    private val OBJECTIVE_TYPES: HashMap<String, Class<out Objective>> = HashMap()
-    private val EVENT_TYPES: HashMap<String, Class<out Event>> = HashMap()
+    private val OBJECTIVE_TYPES: HashMap<String, KClass<out Objective>> = HashMap()
+    private val EVENT_TYPES: HashMap<String, KClass<out Event>> = HashMap()
 
     init {
-        registerEvents("conversation", ConversationEvent::class.java)
-        registerEvents("tag", TagEvent::class.java)
-        registerEvents("first", FirstEvent::class.java)
-        registerEvents("ifelse", IfElseEvent::class.java)
-        registerEvents("objective", ObjectiveEvent::class.java)
-        registerEvents("run", RunEvent::class.java)
+        registerEvents("conversation", ConversationEvent::class)
+        registerEvents("tag", TagEvent::class)
+        registerEvents("first", FirstEvent::class)
+        registerEvents("ifelse", IfElseEvent::class)
+        registerEvents("objective", ObjectiveEvent::class)
+        registerEvents("run", RunEvent::class)
 
-        registerConditions("time", RealTimeCondition::class.java)
-        registerConditions("tag", TagCondition::class.java)
+        registerConditions("time", RealTimeCondition::class)
+        registerConditions("tag", TagCondition::class)
 
-        registerObjectives("self", SelfObjective::class.java)
-        registerObjectives("shock", ShockObjective::class.java)
+        registerObjectives("self", SelfObjective::class)
+        registerObjectives("shock", ShockObjective::class)
     }
 
     /**
@@ -43,19 +44,19 @@ object Registries {
      * @param name           name of the condition type
      * @param conditionClass class object for the condition
      */
-    private fun registerConditions(name: String, conditionClass: Class<out Condition>) {
+    private fun registerConditions(name: String, conditionClass: KClass<out Condition>) {
         CONDITION_TYPES[name] = conditionClass
     }
 
-    fun getConditionClass(name: String): Class<out Condition>? {
+    fun getConditionClass(name: String): KClass<out Condition>? {
         return CONDITION_TYPES[name]
     }
 
-    private fun registerEvents(name: String, eventClass: Class<out Event>) {
+    private fun registerEvents(name: String, eventClass: KClass<out Event>) {
         EVENT_TYPES[name] = eventClass
     }
 
-    fun getEventClass(name: String): Class<out Event>? {
+    fun getEventClass(name: String): KClass<out Event>? {
         return EVENT_TYPES[name]
     }
 
@@ -65,26 +66,26 @@ object Registries {
      * @param name           name of the objective type
      * @param objectiveClass class object for the objective
      */
-    private fun registerObjectives(name: String, objectiveClass: Class<out Objective>) {
+    private fun registerObjectives(name: String, objectiveClass: KClass<out Objective>) {
         OBJECTIVE_TYPES[name] = objectiveClass
     }
 
-    fun getObjectiveClass(name: String): Class<out Objective>? {
+    fun getObjectiveClass(name: String): KClass<out Objective>? {
         return OBJECTIVE_TYPES[name]
     }
 
     /**
      * @return the condition types map
      */
-    fun getConditionTypes(): Map<String, Class<out Condition>> {
-        return HashMap<String, Class<out Condition>>(CONDITION_TYPES)
+    fun getConditionTypes(): Map<String, KClass<out Condition>> {
+        return HashMap<String, KClass<out Condition>>(CONDITION_TYPES)
     }
 
     /**
      * @return the objective types map
      */
-    fun getObjectiveTypes(): Map<String, Class<out Objective>> {
-        return HashMap<String, Class<out Objective>>(OBJECTIVE_TYPES)
+    fun getObjectiveTypes(): Map<String, KClass<out Objective>> {
+        return HashMap<String, KClass<out Objective>>(OBJECTIVE_TYPES)
     }
 
 }

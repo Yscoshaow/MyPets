@@ -87,6 +87,7 @@ dependencies {
     implementation("com.electronwill.night-config:hocon_android:3.6.6")
     implementation("com.electronwill.night-config:toml_android:3.6.6")
     implementation("net.objecthunter:exp4j:0.4.8")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 
 
 

@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import kotlin.reflect.full.primaryConstructor
 
 
 class QuestManager(private val context: Context) {
@@ -163,7 +164,7 @@ class QuestManager(private val context: Context) {
             val instruction = eventID.generateInstruction()
             val type = instruction.getPart(0) ?: return@forEach
             val eventClass = Registries.getEventClass(type) ?: return@forEach
-            EVENTS[eventID] = eventClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            EVENTS[eventID] = eventClass.primaryConstructor!!.call(instruction)
             Log.d("MyPets", "Loaded event in pack: ${pack.packName}, event name: $it")
         }
     }
@@ -175,7 +176,7 @@ class QuestManager(private val context: Context) {
             val instruction = conditionID.generateInstruction()
             val type = instruction.getPart(0) ?: return@forEach
             val conditionClass = Registries.getConditionClass(type) ?: return@forEach
-            CONDITION[conditionID] = conditionClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            CONDITION[conditionID] = conditionClass.primaryConstructor!!.call(instruction)
             Log.d("MyPets", "Loaded condition in pack: ${pack.packName}, condition name: $it")
         }
     }
@@ -187,7 +188,7 @@ class QuestManager(private val context: Context) {
             val instruction = objectiveID.generateInstruction()
             val type = instruction.getPart(0) ?: return@forEach
             val objectiveClass= Registries.getObjectiveClass(type) ?: return@forEach
-            OBJECTIVE[objectiveID] = objectiveClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            OBJECTIVE[objectiveID] = objectiveClass.primaryConstructor!!.call(instruction)
             Log.d("MyPets", "Loaded objective in pack: ${pack.packName}, objective name: $it")
         }
     }
