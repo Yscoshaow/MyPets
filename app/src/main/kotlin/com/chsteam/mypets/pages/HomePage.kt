@@ -113,8 +113,8 @@ class HomePage : Page, KoinComponent {
                 latestMessages.forEach {
                     MessageItem(it.key, it.value, navController)
                 }
-                MessageItem(npc = Npc(0, "", "yscos_shaow", "韶", "quest/npc/avatar/koyori.png", listOf("正在调教小猫咪")), message = Message(0, 0, "你好呀我的小猫咪", Date()), navController)
-                MessageItem(npc = Npc(0, "", "yin", "盈", "quest/npc/avatar/saga.png", listOf("韶的小猫咪")), message = Message(0, 0, "你是？", Date()), navController)
+                MessageItem(npc = Npc(0, "example_package", "yscos_shaow", "韶", "quest/npc/avatar/koyori.png", listOf("正在调教小猫咪")), message = Message(0, 0, "你好呀我的小猫咪", Date()), navController)
+                MessageItem(npc = Npc(0, "example_package", "yin", "盈", "quest/npc/avatar/saga.png", listOf("韶的小猫咪")), message = Message(0, 0, "你是？", Date()), navController)
             }
         }
     }

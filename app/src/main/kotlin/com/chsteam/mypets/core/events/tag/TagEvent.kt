@@ -4,7 +4,7 @@ import com.chsteam.mypets.api.Event
 import com.chsteam.mypets.core.Instruction
 
 class TagEvent(instruction: Instruction) : Event(instruction) {
-    override fun execute() {
+    override fun execute(): Boolean {
         TODO("Not yet implemented")
     }
 }

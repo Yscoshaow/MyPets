@@ -9,7 +9,7 @@ class ConversationEvent(instruction: Instruction) : Event(instruction) {
 
     }
 
-    override fun execute() {
+    override fun execute(): Boolean {
         TODO("Not yet implemented")
     }
 }

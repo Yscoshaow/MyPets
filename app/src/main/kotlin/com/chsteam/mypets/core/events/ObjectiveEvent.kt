@@ -32,21 +32,22 @@ class ObjectiveEvent(instruction: Instruction) : Event(instruction) {
     }
 
 
-    override fun execute() {
+    override fun execute(): Boolean {
         objectives.forEach { objectiveID ->
             val objective = QuestManager.getObjective(objectiveID)
 
             when(action.lowercase()) {
                 "start", "add" -> {
-
+                    return true
                 }
                 "delete", "remove" -> {
-
+                    return true
                 }
                 "complete", "finish" -> {
-
+                    return true
                 }
             }
         }
+        return false
     }
 }

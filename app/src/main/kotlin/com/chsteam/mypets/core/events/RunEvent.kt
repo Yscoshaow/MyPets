@@ -38,9 +38,10 @@ class RunEvent(instruction: Instruction) : Event(instruction) {
         return QuestManager.getEvent(EventID(this.instruction.pack, parts[0]))
     }
 
-    override fun execute() {
+    override fun execute(): Boolean {
         internalEvents.forEach {
             it.execute()
         }
+        return true
     }
 }

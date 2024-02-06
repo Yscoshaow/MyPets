@@ -8,7 +8,7 @@ class FirstEvent(instruction: Instruction) : Event(instruction) {
     init {
 
     }
-    override fun execute() {
+    override fun execute(): Boolean {
         TODO("Not yet implemented")
     }
 }
