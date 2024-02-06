@@ -2,6 +2,7 @@ package com.chsteam.mypets.core.config
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.api.Objective
@@ -31,36 +32,54 @@ class QuestManager(private val context: Context) {
     companion object {
         private const val PACK_FILE_NAME = "package.yml"
 
-        private val packages: HashMap<String, QuestPackage> = HashMap()
+        private val PACKAGES: HashMap<String, QuestPackage> = HashMap()
 
-        private val conversationDatas: HashMap<ConversationID, ConversationData> = HashMap()
+        private val CONVERSATION_DATA: HashMap<ConversationID, ConversationData> = HashMap()
 
-        private val events: HashMap<EventID, Event> = HashMap()
+        private val EVENTS: HashMap<EventID, Event> = HashMap()
 
-        private val condition: HashMap<ConditionID, Condition> = HashMap()
+        private val CONDITION: HashMap<ConditionID, Condition> = HashMap()
 
-        private val objective: HashMap<ObjectiveID, Objective> = HashMap()
+        private val OBJECTIVE: HashMap<ObjectiveID, Objective> = HashMap()
 
         private val variable: HashMap<VariableID, Variable> = HashMap()
 
+        private val EVENTS_CONFIG: HashMap<QuestPackage, HashMap<String, String>> = HashMap()
+
+        private val CONDITION_CONFIG: HashMap<QuestPackage, HashMap<String, String>> = HashMap()
+
+        private val OBJECTIVE_CONFIG: HashMap<QuestPackage, HashMap<String, String>> = HashMap()
+
         fun getQuestPackage(name: String): QuestPackage? {
-            return packages[name]
+            return PACKAGES[name]
         }
 
         fun getConversation(conversationID: ConversationID): ConversationData? {
-            return conversationDatas[conversationID]
+            return CONVERSATION_DATA[conversationID]
         }
 
         fun getCondition(conditionID: ConditionID): Condition? {
-            return condition[conditionID]
+            return CONDITION[conditionID]
         }
 
         fun getObjective(objectiveID: ObjectiveID): Objective? {
-            return objective[objectiveID]
+            return OBJECTIVE[objectiveID]
         }
 
         fun getEvent(eventID: EventID): Event? {
-            return events[eventID]
+            return EVENTS[eventID]
+        }
+
+        fun getRawEvent(questPackage: QuestPackage, name: String): String? {
+            return EVENTS_CONFIG[questPackage]?.get(name)
+        }
+
+        fun getRawCondition(questPackage: QuestPackage, name: String): String? {
+            return CONDITION_CONFIG[questPackage]?.get(name)
+        }
+
+        fun getRawObjective(questPackage: QuestPackage, name: String): String? {
+            return OBJECTIVE_CONFIG[questPackage]?.get(name)
         }
     }
 
@@ -69,16 +88,16 @@ class QuestManager(private val context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             searchForPackages()
 
-            packages.values.forEach {
+            PACKAGES.values.forEach {
                 loadAllDataFromPackage(it, LoaderType.EVENTS)
             }
-            packages.values.forEach {
+            PACKAGES.values.forEach {
                 loadAllDataFromPackage(it, LoaderType.CONDITIONS)
             }
-            packages.values.forEach {
+            PACKAGES.values.forEach {
                 loadAllDataFromPackage(it, LoaderType.OBJECTIVES)
             }
-            packages.values.forEach {
+            PACKAGES.values.forEach {
                 loadAllDataFromPackage(it, LoaderType.CONVERSATION)
             }
         }
@@ -131,38 +150,45 @@ class QuestManager(private val context: Context) {
         config.valueMap().keys.forEach {
             val conversationID = ConversationID(pack, it)
             val conversationData = ConversationData(conversationID, config.get(it))
-            conversationDatas[conversationID] = conversationData
+            CONVERSATION_DATA[conversationID] = conversationData
+            Log.d("MyPets", "Loaded conversation in pack: ${pack.packName}, conversation name: $it")
         }
 
     }
 
     private fun parserEvents(pack: QuestPackage, config: Config) {
         config.valueMap().keys.forEach {
+            EVENTS_CONFIG.getOrPut(pack) { hashMapOf() }[it] = config.get(it)
             val eventID = EventID(pack, it)
             val instruction = eventID.generateInstruction()
             val type = instruction.getPart(0) ?: return@forEach
             val eventClass = Registries.getEventClass(type) ?: return@forEach
-            events[eventID] = eventClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            EVENTS[eventID] = eventClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            Log.d("MyPets", "Loaded event in pack: ${pack.packName}, event name: $it")
         }
     }
 
     private fun parserConditions(pack: QuestPackage, config: Config) {
         config.valueMap().keys.forEach {
-            val conditionID = ConditionID(pack, config.get(it))
+            CONDITION_CONFIG.getOrPut(pack) { hashMapOf() }[it] = config.get(it)
+            val conditionID = ConditionID(pack, it)
             val instruction = conditionID.generateInstruction()
             val type = instruction.getPart(0) ?: return@forEach
             val conditionClass = Registries.getConditionClass(type) ?: return@forEach
-            condition[conditionID] = conditionClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            CONDITION[conditionID] = conditionClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            Log.d("MyPets", "Loaded condition in pack: ${pack.packName}, condition name: $it")
         }
     }
 
     private fun parserObjectives(pack: QuestPackage, config: Config) {
         config.valueMap().keys.forEach {
-            val objectiveID = ObjectiveID(pack, config.get(it))
+            OBJECTIVE_CONFIG.getOrPut(pack) { hashMapOf() }[it] = config.get(it)
+            val objectiveID = ObjectiveID(pack, it)
             val instruction = objectiveID.generateInstruction()
             val type = instruction.getPart(0) ?: return@forEach
             val objectiveClass= Registries.getObjectiveClass(type) ?: return@forEach
-            objective[objectiveID] = objectiveClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            OBJECTIVE[objectiveID] = objectiveClass.getConstructor(Instruction::class.java).newInstance(instruction)
+            Log.d("MyPets", "Loaded objective in pack: ${pack.packName}, objective name: $it")
         }
     }
 
@@ -227,7 +253,7 @@ class QuestManager(private val context: Context) {
                     if (name == "") {
                         val config = ConfigAccessorImpl(context, uri.toString())
                         val name = config.config.get<String>("package.name")
-                        packages[name] = QuestPackage(name, uri.toString().replace("/$PACK_FILE_NAME", ""))
+                        PACKAGES[name] = QuestPackage(name, uri.toString().replace("/$PACK_FILE_NAME", ""))
                     }
                 }
             }
@@ -241,7 +267,7 @@ class QuestManager(private val context: Context) {
                 if(path.contains(PACK_FILE_NAME)) {
                     val config = ConfigAccessorImpl(context, path)
                     val name = config.config.get<String>("package.name")
-                    packages[name] = QuestPackage(name, path.replace("/$PACK_FILE_NAME", ""))
+                    PACKAGES[name] = QuestPackage(name, path.replace("/$PACK_FILE_NAME", ""))
                 }
             } else {
                 for (asset in assets) {

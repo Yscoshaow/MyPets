@@ -1,6 +1,7 @@
 package com.chsteam.mypets.core.id
 
 import com.chsteam.mypets.api.config.quest.QuestPackage
+import com.chsteam.mypets.core.config.QuestManager
 
 class ConditionID(questPackage: QuestPackage, identifier: String) : ID(questPackage, removeExclamationMark(identifier)) {
 
@@ -14,7 +15,7 @@ class ConditionID(questPackage: QuestPackage, identifier: String) : ID(questPack
 
     val inverted: Boolean
 
-    override val rawInstruction: String =  super.pack.getString("conditions." + super.identifier)
+    override val rawInstruction: String =  QuestManager.getRawCondition(questPackage, identifier) ?: ""
 
     init {
         this.inverted = !identifier.isEmpty() && identifier[0] == '!';

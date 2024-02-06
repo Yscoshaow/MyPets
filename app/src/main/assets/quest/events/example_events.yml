@@ -4,6 +4,5 @@ events:
   doEdgingTask: "objective add egdingObject"
   fristTaskDone: "tag add fristTaskDoneTag"
   startYinConv: "conversation start yin"
-  postPicture: "postpic, postTag"
   postpic: "post 今天遇到了韶介绍的小猫呢 post1.png"
   postTag: "tag add postDone"
