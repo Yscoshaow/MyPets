@@ -12,12 +12,12 @@ class ConversationData(val conversationID: ConversationID, config: Config) {
     /**
      * The [QuestPackage] this conversation is in.
      */
-    private val pack: QuestPackage = conversationID.pack
+    val pack: QuestPackage = conversationID.pack
 
     /**
      * The name of this conversation.
      */
-    private val convName: String = conversationID.getBaseID()
+    val convName: String = conversationID.getBaseID()
 
     /**
      * A map of the questers name in different languages.

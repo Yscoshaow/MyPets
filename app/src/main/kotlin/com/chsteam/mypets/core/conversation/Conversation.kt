@@ -1,6 +1,7 @@
 package com.chsteam.mypets.core.conversation
 
 import com.chsteam.mypets.api.Condition
+import com.chsteam.mypets.api.Event
 import com.chsteam.mypets.api.config.quest.QuestPackage
 import com.chsteam.mypets.core.config.QuestManager
 import com.chsteam.mypets.core.database.Npc
@@ -41,22 +42,48 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
     @Volatile
     protected var state = ConversationState.CREATED
 
-    private val data: ConversationData? = QuestManager.getConversation(conversationID)
+    private var data: ConversationData? = QuestManager.getConversation(conversationID)
 
     init {
 
     }
 
-    fun printNPCText()  {
-        if(nextNPCOption == null) {
-            return
+    fun printNPCText() {
+        if (this.nextNPCOption != null) {
+            val text = data?.getText("default", this.nextNPCOption!!)
+
+            // TODO RESOLVE VARIABLES
+            // CONTROL ADD MESSAGE TO CHATTING LIST
+            npcEventRun(this.nextNPCOption!!)
         }
-
-
     }
 
     fun passPlayerAnswer(number: Int) {
+        availablePlayerOptions[number]?.let { playerEventRun(it) }
+    }
 
+    private fun playerEventRun(playerOption: ResolvedOption) {
+        data?.getEventIDs(playerOption, ConversationData.OptionType.PLAYER)?.forEach {
+            if (it != null) {
+                Event.event(it)
+            }
+        }
+    }
+
+    fun responsePrint(playerOption: ResolvedOption) {
+        selectOption(resolvePointers(playerOption), false)
+        printNPCText()
+    }
+
+    private fun resolvePointers(option: ResolvedOption): List<ResolvedOption> {
+        val nextConvData = option.conversationData
+        val rawPointers = nextConvData.getPointers(option)
+        val pointers = mutableListOf<ResolvedOption>()
+        rawPointers.forEach { rawPointer ->
+            val type = if(option.type == ConversationData.OptionType.PLAYER ) ConversationData.OptionType.NPC else ConversationData.OptionType.PLAYER
+            pointers.add(ConversationOptionResolver(nextConvData.pack, nextConvData.convName, type, rawPointer).resolve())
+        }
+        return pointers.toList()
     }
 
 
@@ -80,20 +107,27 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
 
     }
 
-    private fun selectOption(options: List<ResolvedOption>, force: Boolean) {
+    private fun selectOption(options: List<ResolvedOption>, force: Boolean = false) {
         val inputOptions = if (force) listOf(options[0]) else options
 
         nextNPCOption = null
 
         inputOptions.forEach { option ->
             if(option.name == null) {
-                option.conversationData.startingOptions.forEach {
-
+                option.conversationData.startingOptions.forEach { startingOptionName ->
+                    if(force || Condition.conditions(option.conversationData.getConditionIDs(startingOptionName, ConversationData.OptionType.NPC))) {
+                        this.data = option.conversationData
+                        this.nextNPCOption = ResolvedOption(option.conversationData, ConversationData.OptionType.NPC, startingOptionName)
+                        return
+                    }
                 }
             } else {
-
+                if(force || Condition.conditions(option.conversationData.getConditionIDs(option.name, ConversationData.OptionType.NPC))) {
+                    this.data = option.conversationData
+                    this.nextNPCOption = option
+                    return
+                }
             }
-
         }
     }
 
@@ -104,5 +138,17 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
             tempList.add(resolveOption)
         }
         return tempList.toList()
+    }
+
+    private fun npcEventRun(npcOption: ResolvedOption) {
+        data?.getEventIDs(npcOption, ConversationData.OptionType.NPC)?.forEach {
+            if (it != null) {
+                Event.event(it)
+            }
+        }
+    }
+
+    private fun updateOptionShow(npcOption: ResolvedOption) {
+
     }
 }

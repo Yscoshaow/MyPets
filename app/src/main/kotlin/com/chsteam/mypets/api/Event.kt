@@ -1,10 +1,18 @@
 package com.chsteam.mypets.api
 
 import com.chsteam.mypets.core.Instruction
+import com.chsteam.mypets.core.config.QuestManager
 import com.chsteam.mypets.core.id.ConditionID
+import com.chsteam.mypets.core.id.EventID
 
 
 abstract class Event(val instruction: Instruction) {
+
+    companion object {
+        fun event(eventID: EventID): Boolean {
+            return QuestManager.getEvent(eventID)?.execute() ?: false
+        }
+    }
 
     protected val conditions: Array<ConditionID>
 
@@ -20,7 +28,7 @@ abstract class Event(val instruction: Instruction) {
         conditions = tempList.toTypedArray()
     }
 
-    abstract fun execute()
+    abstract fun execute(): Boolean
 
     /**
      * Returns the full id of this event. This includes the package path and the event name, seperated by a dot.

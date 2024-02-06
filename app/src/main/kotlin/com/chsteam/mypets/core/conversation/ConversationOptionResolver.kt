@@ -23,7 +23,7 @@ class ConversationOptionResolver(
     /**
      * The package from which we are searching for the conversation.
      */
-    private lateinit var pack: QuestPackage
+    var pack: QuestPackage
 
     /**
      * The name of the option that is searched.
