@@ -1,5 +1,6 @@
 package com.chsteam.mypets.core.conversation
 
+import android.util.Log
 import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.api.Event
 import com.chsteam.mypets.api.config.quest.QuestPackage

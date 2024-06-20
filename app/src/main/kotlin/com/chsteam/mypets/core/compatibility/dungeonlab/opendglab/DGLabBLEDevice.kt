@@ -1,41 +1,15 @@
 package com.chsteam.mypets.core.compatibility.dungeonlab.opendglab
 
+import com.chsteam.mypets.core.compatibility.dungeonlab.DGLabDevice
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.AutoWaveData
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.AutoWaveState
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.BatteryLevel
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.Power
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.WaveData
 
-class DGLabBLEDevice(val waveSender: (a: WaveData, b: WaveData) -> Unit, val powerSender: (power: ByteArray) -> Unit, val powerCallback: (a: Int, b: Int) -> Unit, val batteryCallback: (level: Int) -> Unit) {
+class DGLabBLEDevice(val waveSender: (a: WaveData, b: WaveData) -> Unit, val powerSender: (power: ByteArray) -> Unit, val powerCallback: (a: Int, b: Int) -> Unit, val batteryCallback: (level: Int) -> Unit) : DGLabDevice() {
 
-    var channelAPower = 0
-    var channelBPower = 0
-
-    private lateinit var channelAWave: AutoWaveState
-    private lateinit var channelBWave: AutoWaveState
-
-    init {
-        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_A, AutoWaveData.AutoWaveType.BREATH.data)
-        selectAutoWave(OpenDGLab.DGChannel.CHANNEL_B, AutoWaveData.AutoWaveType.BREATH.data)
-    }
-
-    fun selectAutoWave(channel: OpenDGLab.DGChannel, wave: AutoWaveData) {
-        when (channel) {
-            OpenDGLab.DGChannel.CHANNEL_A -> {
-                channelAWave = AutoWaveState(wave=wave, wave.sections[0].a,wave.sections[0].b,wave.sections[0].c,wave.sections[0].pc,wave.sections[0].j, wave.sections[0].points, 0)
-            }
-            OpenDGLab.DGChannel.CHANNEL_B -> {
-                channelBWave = AutoWaveState(wave=wave, wave.sections[0].a,wave.sections[0].b,wave.sections[0].c,wave.sections[0].pc,wave.sections[0].j, wave.sections[0].points, 0)
-            }
-        }
-    }
-
-    fun selectAutoWave(waveA: AutoWaveData, waveB: AutoWaveData) {
-        channelAWave = AutoWaveState(wave=waveA, waveA.sections[0].a,waveA.sections[0].b,waveA.sections[0].c,waveA.sections[0].pc,waveA.sections[0].j, waveA.sections[0].points, 0)
-        channelBWave = AutoWaveState(wave=waveB, waveB.sections[0].a,waveB.sections[0].b,waveB.sections[0].c,waveB.sections[0].pc,waveB.sections[0].j, waveB.sections[0].points, 0)
-    }
-
-    fun selectPower(a: Int = channelAPower, b: Int = channelBPower) {
+    override fun selectPower(a: Int, b: Int) {
         if (a < 0 || a > 2047) throw DataOverflowException()
         if (b < 0 || b > 2047) throw DataOverflowException()
         // 郊狼 v2 是反的

@@ -11,13 +11,6 @@ import androidx.core.content.PermissionChecker
 
 object PermissionManager {
 
-    val BLUETOOTH_PERMISSION = arrayOf(
-        Manifest.permission.BLUETOOTH,
-        Manifest.permission.BLUETOOTH_ADMIN,
-        Manifest.permission.BLUETOOTH_CONNECT,
-        Manifest.permission.BLUETOOTH_SCAN
-    )
-
     val LOCATION_PERMISSION = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -27,6 +20,22 @@ object PermissionManager {
     val CAMERA_PERMISSION = arrayOf(
         Manifest.permission.CAMERA
     )
+
+    fun getBluetoothPermissions(): Array<String> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            arrayOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.BLUETOOTH_SCAN
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN
+            )
+        }
+    }
 
     fun hasPermissions(permissions: Array<String>, context: Context): Boolean {
         return permissions.all {

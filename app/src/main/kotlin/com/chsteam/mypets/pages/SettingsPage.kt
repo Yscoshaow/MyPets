@@ -81,7 +81,7 @@ class SettingsPage : Page {
         Column(modifier = Modifier.padding(innerPadding)) {
             Divider()
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(56.dp)) {
-                var checked by remember { mutableStateOf(PermissionManager.hasPermissions(PermissionManager.BLUETOOTH_PERMISSION, context)) }
+                var checked by remember { mutableStateOf(PermissionManager.hasPermissions(PermissionManager.getBluetoothPermissions(), context)) }
 
                 val launcher =
                     rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -108,7 +108,7 @@ class SettingsPage : Page {
                 Switch(
                     checked = checked,
                     onCheckedChange = {
-                        PermissionManager.requestPermissions(PermissionManager.BLUETOOTH_PERMISSION, context, launcher)
+                        PermissionManager.requestPermissions(PermissionManager.getBluetoothPermissions(), context, launcher)
                         checked = it
                     },
                     thumbContent = if (checked) {
@@ -183,7 +183,7 @@ class SettingsPage : Page {
                             checked = false
                             Toast.makeText(
                                 context,
-                                "Bluetooth permissions are required to enable Bluetooth",
+                                "Location permissions are required to enable find bluetooth device",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

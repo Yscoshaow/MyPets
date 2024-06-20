@@ -6,9 +6,11 @@ import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.WaveData
 import kotlin.math.*
 
 object OpenDGLab {
+
     enum class DGChannel {
         CHANNEL_A, CHANNEL_B
     }
+
     fun calcXYZ(frequency: Double, z: Int): WaveData {
         if (frequency < 10 || frequency > 1000) throw DataOverflowException()
         if (frequency < 0) throw DataOverflowException()

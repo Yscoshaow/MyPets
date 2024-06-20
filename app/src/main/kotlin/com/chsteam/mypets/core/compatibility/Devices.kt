@@ -8,7 +8,7 @@ import com.clj.fastble.data.BleDevice
 
 enum class Devices(val i18Name: String,val bluetoothName: String) {
     DUNGEON_LAB_V2("郊狼第二代", "D-LAB ESTIM01"),
-    DUNGEON_LAB_V3("郊狼第三代", "D-LAB ESTIM02");
+    DUNGEON_LAB_V3("郊狼第三代", "47L121000");
 
     fun getDevice(context: Context, viewModel: BluetoothViewModel, bleDevice: BleDevice): Device {
         return when(this) {

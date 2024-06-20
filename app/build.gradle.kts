@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.chsteam.mypets"
-        minSdk = 33
+        minSdk = 28
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-    implementation("androidx.documentfile:documentfile:1.0.1")
     val room_version = "2.6.1"
     var carmera_version = "1.3.1"
     val paging_version = "3.2.1"
@@ -79,6 +78,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
+    implementation("androidx.documentfile:documentfile:1.0.1")
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.electronwill.night-config:core_android:3.6.6")
