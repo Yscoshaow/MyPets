@@ -13,7 +13,6 @@ object OpenDGLab {
 
     fun calcXYZ(frequency: Double, z: Int): WaveData {
         if (frequency < 10 || frequency > 1000) throw DataOverflowException()
-        if (frequency < 0) throw DataOverflowException()
         if (z > 31 || z < 0) throw DataOverflowException()
         var x = (frequency / 1000).pow(0.5) * 15
         var y = frequency - x

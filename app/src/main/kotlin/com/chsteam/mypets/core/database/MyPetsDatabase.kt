@@ -7,7 +7,7 @@ import com.chsteam.mypets.core.database.converters.DateConverters
 import com.chsteam.mypets.core.database.converters.ListConverters
 
 @TypeConverters(DateConverters::class, ListConverters::class)
-@Database(entities = [Chat::class, Message::class, Npc::class, Post::class, Tag::class], version = 1)
+@Database(entities = [Chat::class, Message::class, Npc::class, Post::class, Tag::class, Dialog::class], version = 1)
 abstract class MyPetsDatabase : RoomDatabase() {
 
     abstract fun chatDao(): ChatDao
@@ -17,5 +17,7 @@ abstract class MyPetsDatabase : RoomDatabase() {
     abstract fun postDao(): PostDao
 
     abstract fun tagDao(): TagDao
+
+    abstract fun dialogDao(): DialogDao
 
 }

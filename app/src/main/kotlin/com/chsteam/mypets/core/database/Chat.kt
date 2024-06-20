@@ -1,6 +1,7 @@
 package com.chsteam.mypets.core.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -8,6 +9,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Update
 import java.util.Date
 
 @Entity(
@@ -24,6 +26,21 @@ data class Chat(
     @PrimaryKey(autoGenerate = true) val chatId: Int = 0,
     val npcId: Int,
     val npc: String
+)
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Chat::class,
+            parentColumns = ["chatId"],
+            childColumns = ["chatId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["chatId"])]
+)
+data class Dialog(
+    @PrimaryKey val chatId: Int,
+    val pointer: String
 )
 
 @Entity(
@@ -80,4 +97,26 @@ interface ChatDao {
         WHERE Message.messageId = :messageId
     """)
     suspend fun getNpcByMessageId(messageId: Int): Npc?
+}
+
+@Dao
+interface DialogDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(dialog: Dialog)
+
+    @Update
+    suspend fun update(dialog: Dialog)
+
+    @Delete
+    suspend fun delete(dialog: Dialog)
+
+    @Query("SELECT * FROM Dialog WHERE chatId = :chatId")
+    suspend fun getDialogByChatId(chatId: Int): Dialog?
+
+    @Query("SELECT * FROM Dialog")
+    suspend fun getAllDialogs(): List<Dialog>
+
+    @Query("DELETE FROM Dialog")
+    suspend fun deleteAllDialogs()
 }
