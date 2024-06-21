@@ -2,12 +2,11 @@ package com.chsteam.mypets.core.compatibility.dungeonlab.opendglab
 
 import com.chsteam.mypets.core.compatibility.dungeonlab.DGLabDevice
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.AutoWaveData
-import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.AutoWaveState
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.BatteryLevel
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.Power
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.WaveData
 
-class DGLabBLEDevice(val waveSender: (a: WaveData, b: WaveData) -> Unit, val powerSender: (power: ByteArray) -> Unit, val powerCallback: (a: Int, b: Int) -> Unit, val batteryCallback: (level: Int) -> Unit) : DGLabDevice() {
+class DGLabBLEDeviceV2(val waveSender: (a: WaveData, b: WaveData) -> Unit, val powerSender: (power: ByteArray) -> Unit, val powerCallback: (a: Int, b: Int) -> Unit, val batteryCallback: (level: Int) -> Unit) : DGLabDevice() {
 
     override fun selectPower(a: Int, b: Int) {
         if (a < 0 || a > 2047) throw DataOverflowException()

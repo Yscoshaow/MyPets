@@ -79,13 +79,13 @@ class ExperimentalPage : Page, KoinComponent {
         var expanded by remember { mutableStateOf(false) }
 
         val context = LocalContext.current
-        var dungeonLabV2 = expViewModel.speedController.value
+        var dungeonLab = expViewModel.speedController.value
 
         var selectedOption by remember {
-            if(dungeonLabV2 == null) {
+            if(dungeonLab == null) {
                 mutableStateOf("")
             } else {
-                mutableStateOf(dungeonLabV2!!.deviceName.value)
+                mutableStateOf(dungeonLab!!.deviceName.value)
             }
         }
 
@@ -98,22 +98,22 @@ class ExperimentalPage : Page, KoinComponent {
                 Text(text = "步速小游戏", style = MaterialTheme.typography.displaySmall)
                 Spacer(Modifier.height(12.dp))
 
-                TextField(value = "开启本游戏后，你需要保持步速达到一定速度, 不然就会根据设定好的公式电击哦. 你当前的速度是 ${dungeonLabV2?.speed?.value?: 0f}", onValueChange = {}, readOnly = true)
+                TextField(value = "开启本游戏后，你需要保持步速达到一定速度, 不然就会根据设定好的公式电击哦. 你当前的速度是 ${dungeonLab?.speed?.value?: 0f}", onValueChange = {}, readOnly = true)
                 Spacer(Modifier.height(12.dp))
                 Column {
                     TextField(
                         modifier = Modifier.fillMaxWidth(1f),
-                        value = dungeonLabV2?.channelASpeedCalc?.value ?: "", 
+                        value = dungeonLab?.channelASpeedCalc?.value ?: "",
                         onValueChange = {
-                            dungeonLabV2?.channelASpeedCalc?.value = it
+                            dungeonLab?.channelASpeedCalc?.value = it
                         },
                         label = { Text(text = "通道A计算公式")}
                     )
                     TextField(
                         modifier = Modifier.fillMaxWidth(1f),
-                        value = dungeonLabV2?.channelBSpeedCalc?.value ?: "",
+                        value = dungeonLab?.channelBSpeedCalc?.value ?: "",
                         onValueChange = {
-                            dungeonLabV2?.channelBSpeedCalc?.value = it
+                            dungeonLab?.channelBSpeedCalc?.value = it
                         },
                         label = { Text(text = "通道B计算公式")}
                     )
@@ -145,7 +145,7 @@ class ExperimentalPage : Page, KoinComponent {
                             DropdownMenuItem(text = { Text(text = device.deviceName.value) }, onClick = {
                                 selectedOption = device.deviceName.value
                                 expanded = false
-                                dungeonLabV2 = device as DungeonLabV2
+                                dungeonLab = device as DungeonLabV2
                             })
                         }
 
@@ -155,13 +155,13 @@ class ExperimentalPage : Page, KoinComponent {
                 Row {
                     Spacer(Modifier.weight(1f))
                     IconButton(onClick = {
-                        if(dungeonLabV2 != null) {
-                            dungeonLabV2?.controlType = ControlType.SENSOR
-                            dungeonLabV2?.activeSpeed()
-                            dungeonLabV2?.enableChanelAWave?.value =
+                        if(dungeonLab != null) {
+                            dungeonLab?.controlType = ControlType.SENSOR
+                            dungeonLab?.activeSpeed()
+                            dungeonLab?.enableChanelAWave?.value =
                                 AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }
                                     .toList()
-                            dungeonLabV2?.enableChanelBWave?.value =
+                            dungeonLab?.enableChanelBWave?.value =
                                 AutoWaveData.AutoWaveType.values().filter { it != AutoWaveData.AutoWaveType.OFF }
                                     .toList()
                             Toast.makeText(context, "游戏开始", Toast.LENGTH_LONG).show()

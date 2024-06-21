@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothGatt
 import android.content.Context
 import com.chsteam.mypets.core.bluetooth.BluetoothViewModel
 import com.chsteam.mypets.core.compatibility.Devices
-import com.chsteam.mypets.core.compatibility.dungeonlab.mypets.DGLabBLEDevice
+import com.chsteam.mypets.core.compatibility.dungeonlab.mypets.DGLabBLEDeviceV3
 import com.clj.fastble.BleManager
 import com.clj.fastble.callback.BleNotifyCallback
 import com.clj.fastble.callback.BleReadCallback
@@ -27,7 +27,7 @@ class DungeonLabV3(context: Context, viewModel: BluetoothViewModel, bleDevice: B
         get() = Devices.DUNGEON_LAB_V3
 
     override
-    val device = DGLabBLEDevice(::dataSender)
+    val device = DGLabBLEDeviceV3(::dataSender)
 
     override fun tick() {
         device.update()

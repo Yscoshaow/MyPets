@@ -51,10 +51,10 @@ abstract class DungeonLab(context: Context, viewModel: BluetoothViewModel, bleDe
 
     abstract val device: DGLabDevice
 
-    private val channelASpeedCalc = mutableStateOf("(speed - 2) * 800")
-    private val channelBSpeedCalc = mutableStateOf("(speed - 2) * 800")
+    val channelASpeedCalc = mutableStateOf("(speed - 2) * 800")
+    val channelBSpeedCalc = mutableStateOf("(speed - 2) * 800")
 
-    private val speed = mutableStateOf(0f)
+    val speed = mutableStateOf(0f)
 
     val channelA = mutableStateOf(0)
     val channelB = mutableStateOf(0)
@@ -62,8 +62,8 @@ abstract class DungeonLab(context: Context, viewModel: BluetoothViewModel, bleDe
     private val activeChannelAWave = mutableStateOf(AutoWaveData.AutoWaveType.OFF)
     private val activeChannelBWave = mutableStateOf(AutoWaveData.AutoWaveType.OFF)
 
-    private val enableChanelAWave = mutableStateOf(listOf<AutoWaveData.AutoWaveType>())
-    private val enableChanelBWave = mutableStateOf(listOf<AutoWaveData.AutoWaveType>())
+    val enableChanelAWave = mutableStateOf(listOf<AutoWaveData.AutoWaveType>())
+    val enableChanelBWave = mutableStateOf(listOf<AutoWaveData.AutoWaveType>())
 
     private val showChannelA = mutableStateOf(true)
 
@@ -85,8 +85,8 @@ abstract class DungeonLab(context: Context, viewModel: BluetoothViewModel, bleDe
                         }
                         if(bPower > 0 && speed > 0.2)  {
                             val trueB = if (bPower > 2047) 2047 else bPower.toInt()
-                            channelA.value = trueB
-                            this@DungeonLab.device.channelAPower = trueB
+                            channelB.value = trueB
+                            this@DungeonLab.device.channelBPower = trueB
                             this@DungeonLab.device.selectPower()
                         }
                     }

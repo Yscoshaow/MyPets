@@ -9,7 +9,7 @@ import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.OpenDGLab
 import com.chsteam.mypets.core.compatibility.dungeonlab.opendglab.data.AutoWaveData
 import java.nio.ByteBuffer
 
-class DGLabBLEDevice(val dataSender: (ByteArray) -> Unit) : DGLabDevice() {
+class DGLabBLEDeviceV3(val dataSender: (ByteArray) -> Unit) : DGLabDevice() {
 
     fun stopAll() {
         update(0, 0)
