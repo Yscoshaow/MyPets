@@ -55,7 +55,7 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
 
     }
 
-    private fun printNPCText() {
+    private suspend fun printNPCText() {
         if (this.nextNPCOption != null) {
             val text = data?.getText("default", this.nextNPCOption!!) ?: ""
 
@@ -68,14 +68,14 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    fun passPlayerAnswer(number: Int) {
+    suspend fun passPlayerAnswer(number: Int) {
         availablePlayerOptions[number]?.let {
             playerEventRun(it)
             responsePrint(it)
         }
     }
 
-    private fun playerEventRun(playerOption: ResolvedOption) {
+    private suspend fun playerEventRun(playerOption: ResolvedOption) {
         data?.getEventIDs(playerOption, ConversationData.OptionType.PLAYER)?.forEach {
             if (it != null) {
                 Event.event(it)
@@ -83,12 +83,12 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    private fun responsePrint(playerOption: ResolvedOption) {
+    suspend private fun responsePrint(playerOption: ResolvedOption) {
         selectOption(resolvePointers(playerOption), false)
         printNPCText()
     }
 
-    private fun resolvePointers(option: ResolvedOption): List<ResolvedOption> {
+    suspend private fun resolvePointers(option: ResolvedOption): List<ResolvedOption> {
         val nextConvData = option.conversationData
         val rawPointers = nextConvData.getPointers(option)
         val pointers = mutableListOf<ResolvedOption>()
@@ -99,7 +99,7 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         return pointers.toList()
     }
 
-    fun forceStart(startingOption: String) {
+    suspend fun forceStart(startingOption: String) {
         if (state.isStarted) {
             return
         }
@@ -109,7 +109,7 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
     }
 
 
-    fun start(startingOption: String?) {
+    suspend fun start(startingOption: String?) {
         val startingOptions = if(startingOption != null) {
             mutableListOf(startingOption)
         } else {
@@ -132,11 +132,11 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    private fun selectOption(resolvedOptions: List<String>) {
+    private suspend  fun selectOption(resolvedOptions: List<String>) {
 
     }
 
-    private fun selectOption(options: List<ResolvedOption>, force: Boolean = false) {
+    private suspend  fun selectOption(options: List<ResolvedOption>, force: Boolean = false) {
         val inputOptions = if (force && options.isNotEmpty()) listOf(options[0]) else options
 
         this.nextNPCOption = null
@@ -160,7 +160,7 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    private fun resolveOptions(startingOptions: List<String>) : List<ResolvedOption> {
+    private suspend fun resolveOptions(startingOptions: List<String>) : List<ResolvedOption> {
         val tempList = mutableListOf<ResolvedOption>()
         startingOptions.forEach {
             val resolveOption = ConversationOptionResolver(pack, identifier.getBaseID(), ConversationData.OptionType.NPC, it).resolve()
@@ -169,7 +169,7 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         return tempList.toList()
     }
 
-    private fun npcEventRun(npcOption: ResolvedOption) {
+    private suspend fun npcEventRun(npcOption: ResolvedOption) {
         data?.getEventIDs(npcOption, ConversationData.OptionType.NPC)?.forEach {
             if (it != null) {
                 Event.event(it)
@@ -177,11 +177,11 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    private fun optionPrint(npcOption: ResolvedOption) {
+    private suspend  fun optionPrint(npcOption: ResolvedOption) {
         printOptions(resolvePointers(npcOption));
     }
 
-    private fun printOptions(options: List<ResolvedOption>) {
+    private suspend fun printOptions(options: List<ResolvedOption>) {
         val allOptions: MutableList<Pair<ResolvedOption, List<Boolean>>> = mutableListOf()
 
         options.forEach { option ->

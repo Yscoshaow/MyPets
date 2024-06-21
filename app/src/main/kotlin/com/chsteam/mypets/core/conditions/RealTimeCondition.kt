@@ -52,7 +52,7 @@ class RealTimeCondition(instruction: Instruction) : Condition(instruction) {
     }
 
 
-    override fun execute(): Boolean {
+    override suspend fun execute(): Boolean {
         val cal = Calendar.getInstance()
         val now = cal.time
         val startTime = atTime(cal, hoursMin, minutesMin)

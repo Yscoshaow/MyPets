@@ -218,11 +218,14 @@ class ChatPage : Page, KoinComponent {
 
     @Composable
     fun Options(text: String, number: Int) {
+        val scope = rememberCoroutineScope()
         Row(
             Modifier
                 .fillMaxWidth(1f)
                 .clickable {
-                    viewModel.chattingNpc.value?.let { Conversation.getOrCreateConversation(it).passPlayerAnswer(number = number) }
+                    scope.launch {
+                        viewModel.chattingNpc.value?.let { Conversation.getOrCreateConversation(it).passPlayerAnswer(number = number) }
+                    }
                 }
         ) {
             val color = MaterialTheme.colorScheme.primary

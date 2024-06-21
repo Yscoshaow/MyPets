@@ -2,9 +2,14 @@ package com.chsteam.mypets.core.conditions
 
 import com.chsteam.mypets.api.Condition
 import com.chsteam.mypets.core.Instruction
+import com.chsteam.mypets.core.database.TagDao
 import com.chsteam.mypets.core.utils.addPackage
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class TagCondition(instruction: Instruction) : Condition(instruction) {
+class TagCondition(instruction: Instruction) : Condition(instruction), KoinComponent {
+
+    private val tagDao: TagDao by inject()
 
     private val tag: String
 
@@ -12,7 +17,7 @@ class TagCondition(instruction: Instruction) : Condition(instruction) {
         tag = addPackage(instruction.pack, instruction.instruction)
     }
 
-    override fun execute(): Boolean {
-        return true
+    override suspend fun execute(): Boolean {
+        return tagDao.contains(tag)
     }
 }

@@ -18,6 +18,7 @@ val databaseModule = module {
     single { get<MyPetsDatabase>().chatDao() }
     single { get<MyPetsDatabase>().npcDao() }
     single { get<MyPetsDatabase>().dialogDao() }
+    single { get<MyPetsDatabase>().tagDao() }
 }
 
 val viewModelModule = module {

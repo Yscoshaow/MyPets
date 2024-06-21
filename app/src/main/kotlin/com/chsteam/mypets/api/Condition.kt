@@ -6,10 +6,10 @@ import com.chsteam.mypets.core.id.ConditionID
 
 
 abstract class Condition(val instruction: Instruction) {
-    abstract fun execute() : Boolean
+    abstract suspend fun execute() : Boolean
 
     companion object {
-        fun conditions(conditions: Collection<ConditionID>): Boolean {
+        suspend fun conditions(conditions: Collection<ConditionID>): Boolean {
             conditions.forEach {
                 if(!condition(it)) {
                     return false
@@ -18,7 +18,7 @@ abstract class Condition(val instruction: Instruction) {
             return true
         }
 
-        fun condition(conditionID: ConditionID): Boolean {
+        suspend fun condition(conditionID: ConditionID): Boolean {
             QuestManager.getCondition(conditionID)?.let {
                 return it.execute()
             }
