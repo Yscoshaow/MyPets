@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -77,10 +78,14 @@ class ChatPage : Page, KoinComponent {
 
     @Composable
     fun MessageList() {
+
+        val chattingNpc by viewModel.chattingNpc
+        val allMessage by viewModel.allMessage.observeAsState()
+
         LazyColumn {
             item {
-                if(viewModel.chattingNpc.value != null) {
-                    viewModel.allMessage.value?.get(viewModel.chattingNpc.value)?.forEach { message: Message ->
+                if (chattingNpc != null) {
+                    allMessage?.get(chattingNpc)?.forEach { message: Message ->
                         Spacer(modifier = Modifier.padding(5.dp))
                         MessageBubbleNpc(message = message.message)
                     }

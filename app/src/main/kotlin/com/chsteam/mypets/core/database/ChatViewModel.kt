@@ -17,7 +17,7 @@ class ChatViewModel : ViewModel(), KoinComponent {
 
     val latestMessages = MutableLiveData<HashMap<Npc, Message>>()
 
-    val allMessage = MutableLiveData<HashMap<Npc, MutableList<Message>>>()
+    val allMessage = MutableLiveData<HashMap<Npc, MutableList<Message>>>(HashMap())
 
     val chattingNpc = mutableStateOf<Npc?>(null)
 
@@ -43,10 +43,11 @@ class ChatViewModel : ViewModel(), KoinComponent {
     }
 
     fun addMessage(message: Message) {
-        val messages = allMessage.value?.get(chattingNpc.value) ?: mutableListOf()
+        val currentNpc = chattingNpc.value ?: return
+        val messages = allMessage.value?.get(currentNpc) ?: mutableListOf()
         messages.add(message)
-        allMessage.value?.put(chattingNpc.value!!, messages)
-        allMessage.postValue(allMessage.value)
+        allMessage.value?.put(currentNpc, messages)
+        allMessage.value = allMessage.value
     }
 
     fun addOption(text: String) {
