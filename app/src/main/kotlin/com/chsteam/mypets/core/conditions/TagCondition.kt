@@ -13,6 +13,6 @@ class TagCondition(instruction: Instruction) : Condition(instruction) {
     }
 
     override fun execute(): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 }

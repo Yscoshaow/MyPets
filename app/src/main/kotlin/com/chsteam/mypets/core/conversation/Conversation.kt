@@ -99,6 +99,15 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         return pointers.toList()
     }
 
+    fun forceStart(startingOption: String) {
+        if (state.isStarted) {
+            return
+        }
+        state = ConversationState.ACTIVE
+        val resolveOption = ConversationOptionResolver(pack, identifier.getBaseID(), ConversationData.OptionType.NPC, startingOption).resolve()
+        selectOption(listOf(resolveOption), false)
+    }
+
 
     fun start(startingOption: String?) {
         val startingOptions = if(startingOption != null) {
@@ -115,9 +124,11 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
             startingOptions.addAll(data!!.startingOptions)
             val resolvedOptions = resolveOptions(startingOptions)
             selectOption(resolvedOptions, false)
+            printNPCText()
         } else {
             val resolvedOptions = resolveOptions(startingOptions)
             selectOption(resolvedOptions, true)
+            printNPCText()
         }
     }
 
@@ -126,9 +137,9 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
     }
 
     private fun selectOption(options: List<ResolvedOption>, force: Boolean = false) {
-        val inputOptions = if (force) listOf(options[0]) else options
+        val inputOptions = if (force && options.isNotEmpty()) listOf(options[0]) else options
 
-        nextNPCOption = null
+        this.nextNPCOption = null
 
         inputOptions.forEach { option ->
             if(option.name == null) {

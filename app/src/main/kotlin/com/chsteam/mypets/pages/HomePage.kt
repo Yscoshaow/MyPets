@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +58,7 @@ import com.chsteam.mypets.core.conversation.Conversation
 import com.chsteam.mypets.core.database.ChatViewModel
 import com.chsteam.mypets.core.database.Message
 import com.chsteam.mypets.core.database.Npc
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.Date
@@ -122,10 +124,13 @@ class HomePage : Page, KoinComponent {
 
     @Composable
     fun MessageItem(npc: Npc, message: Message, navController: NavController) {
+        val coroutineScope = rememberCoroutineScope()
         Box(modifier = Modifier.clickable {
             viewModel.chattingNpc.value = npc
             navController.navigate(Pages.CHAT.name)
-            Conversation.getOrCreateConversation(npc).start("")
+            coroutineScope.launch {
+                viewModel.startChat()
+            }
         }) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()) {
                 npc.ShowAvatar(modifier = Modifier.padding(5.dp))
