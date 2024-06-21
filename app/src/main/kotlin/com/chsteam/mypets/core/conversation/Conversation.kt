@@ -83,12 +83,12 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
     }
 
-    suspend private fun responsePrint(playerOption: ResolvedOption) {
+    private suspend fun responsePrint(playerOption: ResolvedOption) {
         selectOption(resolvePointers(playerOption), false)
         printNPCText()
     }
 
-    suspend private fun resolvePointers(option: ResolvedOption): List<ResolvedOption> {
+    private fun resolvePointers(option: ResolvedOption): List<ResolvedOption> {
         val nextConvData = option.conversationData
         val rawPointers = nextConvData.getPointers(option)
         val pointers = mutableListOf<ResolvedOption>()
@@ -193,6 +193,8 @@ class Conversation(conversationID: ConversationID, var startingOption: List<Stri
         }
 
         var optionsCount = 0
+
+        viewModel.responseMessage.value = emptyList()
 
         allOptions.forEach { option ->
             if(!option.second.contains(false)) {

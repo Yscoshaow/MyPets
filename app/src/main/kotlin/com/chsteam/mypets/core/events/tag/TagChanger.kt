@@ -10,5 +10,5 @@ interface TagChanger {
      * Apply the changes to the defined tags.
      * @param tag Tag data whose tags shall be changed.
      */
-    fun changeTags(tag: Tag)
+    suspend fun changeTags(tag: Tag)
 }

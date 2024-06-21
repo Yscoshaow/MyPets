@@ -48,6 +48,7 @@ import com.chsteam.mypets.core.database.Message
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.util.Date
 
 class ChatPage : Page, KoinComponent {
 
@@ -71,7 +72,7 @@ class ChatPage : Page, KoinComponent {
                 SnackbarHost(hostState = snackbarHostState)
             },
             topBar = { TopBar(navController, snackbarHostState) },
-            bottomBar = { BottomBar() },
+            bottomBar = { BottomBar(snackbarHostState = snackbarHostState) },
             content = content
         )
     }
@@ -87,7 +88,11 @@ class ChatPage : Page, KoinComponent {
                 if (chattingNpc != null) {
                     allMessage?.get(chattingNpc)?.forEach { message: Message ->
                         Spacer(modifier = Modifier.padding(5.dp))
-                        MessageBubbleNpc(message = message.message)
+                        if(message.sendSelf) {
+                            MessageBubbleYour(message = message.message)
+                        } else {
+                            MessageBubbleNpc(message = message.message)
+                        }
                     }
                 }
             }
@@ -184,13 +189,21 @@ class ChatPage : Page, KoinComponent {
     }
 
     @Composable
-    fun BottomBar() {
+    fun BottomBar(snackbarHostState: SnackbarHostState) {
         Column(modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)) {
             var showList by remember { mutableStateOf(false) }
-
+            val scope = rememberCoroutineScope()
             if(!showList) {
                 Row(modifier = Modifier
-                    .clickable { showList = !showList }
+                    .clickable {
+                        if(viewModel.responseMessage.value.isNotEmpty()) {
+                            showList = !showList
+                        } else {
+                            scope.launch {
+                                snackbarHostState.showSnackbar("你暂时没有什么想对${viewModel.chattingNpc.value?.name}说的话", actionLabel = "Error")
+                            }
+                        }
+                    }
                     .fillMaxWidth()
                     .fillMaxHeight(0.06f),
                     verticalAlignment = Alignment.CenterVertically
@@ -206,7 +219,17 @@ class ChatPage : Page, KoinComponent {
                 LazyColumn {
                     item {
                         for(i in 0 until  viewModel.responseMessage.value.size) {
-                            Options(text = viewModel.responseMessage.value[i], number = i)
+                            Options(text = viewModel.responseMessage.value[i]) {
+                                scope.launch {
+                                    viewModel.chattingNpc.value?.let {
+                                        viewModel.addMessage(Message(0, it.id, viewModel.responseMessage.value[i], Date(), true))
+                                        Conversation
+                                            .getOrCreateConversation(it)
+                                            .passPlayerAnswer(number = i + 1)
+                                    }
+                                }
+                                showList = false
+                            }
                         }
                     }
                 }
@@ -217,16 +240,12 @@ class ChatPage : Page, KoinComponent {
 
 
     @Composable
-    fun Options(text: String, number: Int) {
+    fun Options(text: String, click: () -> Unit) {
         val scope = rememberCoroutineScope()
         Row(
             Modifier
                 .fillMaxWidth(1f)
-                .clickable {
-                    scope.launch {
-                        viewModel.chattingNpc.value?.let { Conversation.getOrCreateConversation(it).passPlayerAnswer(number = number) }
-                    }
-                }
+                .clickable { click.invoke() }
         ) {
             val color = MaterialTheme.colorScheme.primary
             Text(text = text, modifier = Modifier

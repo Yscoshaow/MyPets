@@ -48,10 +48,17 @@ class ChatViewModel : ViewModel(), KoinComponent {
         messages.add(message)
         allMessage.value?.put(currentNpc, messages)
         allMessage.value = allMessage.value
+        updateLatestMessage(message)
     }
 
     fun addOption(text: String) {
         responseMessage.value = responseMessage.value + text
+    }
+
+    private fun updateLatestMessage(message: Message) {
+        val currentNpc = chattingNpc.value ?: return
+        latestMessages.value?.put(currentNpc, message)
+        latestMessages.value = latestMessages.value
     }
 
 
