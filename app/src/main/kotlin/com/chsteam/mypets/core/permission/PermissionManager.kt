@@ -11,6 +11,10 @@ import androidx.core.content.PermissionChecker
 
 object PermissionManager {
 
+    val RECORD_AUDIO_PERMISSION = arrayOf(
+        Manifest.permission.RECORD_AUDIO
+    )
+
     val LOCATION_PERMISSION = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,

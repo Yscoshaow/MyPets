@@ -19,11 +19,14 @@ import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Task
 import androidx.compose.material.icons.outlined.DataObject
+import androidx.compose.material.icons.outlined.Devices
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -144,7 +147,7 @@ class HomePage : Page, KoinComponent {
                         Text(text = npc.name, color = MaterialTheme.colorScheme.primary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         Text(text = message.message)
                     }
-                    Divider()
+                    HorizontalDivider()
                 }
             }
         }
@@ -223,11 +226,11 @@ class HomePage : Page, KoinComponent {
                     navController.navigate(Pages.SETTINGS.name)
                 }
             )
-            Divider()
+            HorizontalDivider()
             NavigationDrawerItem(
                 label = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Outlined.Lock ,"Device", modifier = Modifier.padding(end = 24.dp, start = 12.dp))
+                        Icon(Icons.Outlined.SmartToy ,"Device", modifier = Modifier.padding(end = 24.dp, start = 12.dp))
                         Text(text = "设备", fontSize = TextUnit(23f, TextUnitType.Sp))
                     }
                 },
@@ -237,7 +240,7 @@ class HomePage : Page, KoinComponent {
                     navController.navigate(Pages.DEVICES.name)
                 }
             )
-            Divider()
+            HorizontalDivider()
             NavigationDrawerItem(
                 label = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -251,7 +254,35 @@ class HomePage : Page, KoinComponent {
                     navController.navigate(Pages.EXPERIMENTAL.name)
                 }
             )
-            Divider()
+            HorizontalDivider()
+            NavigationDrawerItem(
+                label = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.Lock ,"Chasity", modifier = Modifier.padding(end = 24.dp, start = 12.dp))
+                        Text(text = "欲望之锁", fontSize = TextUnit(23f, TextUnitType.Sp))
+                    }
+                },
+                shape = RectangleShape,
+                selected = false,
+                onClick = {
+                    navController.navigate(Pages.CHASITY.name)
+                }
+            )
+            HorizontalDivider()
+            NavigationDrawerItem(
+                label = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.Lock ,"Calendar", modifier = Modifier.padding(end = 24.dp, start = 12.dp))
+                        Text(text = "日程", fontSize = TextUnit(23f, TextUnitType.Sp))
+                    }
+                },
+                shape = RectangleShape,
+                selected = false,
+                onClick = {
+                    navController.navigate(Pages.CALENDAR.name)
+                }
+            )
+            HorizontalDivider()
         }
     }
 }

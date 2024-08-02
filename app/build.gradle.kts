@@ -52,8 +52,7 @@ android {
 
 dependencies {
     val room_version = "2.6.1"
-    var carmera_version = "1.3.1"
-    val paging_version = "3.2.1"
+    val carmera_version = "1.3.1"
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -63,6 +62,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.animation:animation")
+    implementation("androidx.work:work-runtime:2.9.0")
 
     implementation("androidx.camera:camera-camera2:$carmera_version")
     implementation("androidx.camera:camera-lifecycle:$carmera_version")
@@ -73,8 +74,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-    implementation("androidx.paging:paging-runtime:$paging_version")
-    implementation("androidx.paging:paging-compose:3.3.0-alpha02")
+    implementation("androidx.paging:paging-runtime:3.3.0")
+    implementation("androidx.paging:paging-compose:3.3.0")
     implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation("com.google.accompanist:accompanist-pager:0.32.0")
     implementation("com.github.Jasonchenlijian:FastBle:2.4.0")
@@ -88,6 +89,12 @@ dependencies {
     implementation("com.electronwill.night-config:toml_android:3.6.6")
     implementation("net.objecthunter:exp4j:0.4.8")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("dev.shreyaspatil:capturable:2.1.0")
+    implementation("com.himanshoe:kalendar:1.3.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+    implementation("com.google.mlkit:digital-ink-recognition:17.0.0")
+    implementation("me.zhanghai.compose.preference:library:1.0.0")
+    implementation("androidx.glance:glance-appwidget:1.1.0")
 
 
 

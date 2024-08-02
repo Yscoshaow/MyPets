@@ -3,6 +3,7 @@ package com.chsteam.mypets.di
 import org.koin.dsl.module
 import androidx.room.Room
 import com.chsteam.mypets.core.bluetooth.BluetoothViewModel
+import com.chsteam.mypets.core.chasity.ChasityViewModel
 import com.chsteam.mypets.core.database.ChatViewModel
 import com.chsteam.mypets.core.database.MyPetsDatabase
 import com.chsteam.mypets.core.experimental.ExperimentalViewModel
@@ -25,6 +26,7 @@ val viewModelModule = module {
     single { BluetoothViewModel() }
     single { ChatViewModel() }
     single { ExperimentalViewModel() }
+    single { ChasityViewModel() }
 }
 
 val appModule = module {

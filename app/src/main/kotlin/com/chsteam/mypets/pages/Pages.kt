@@ -6,5 +6,7 @@ enum class Pages(val page: Page) {
     CHAT(ChatPage()),
     TASK(TaskPage()),
     DEVICES(DevicesPage()),
-    EXPERIMENTAL(ExperimentalPage())
+    EXPERIMENTAL(ExperimentalPage()),
+    CHASITY(ChasityPage()),
+    CALENDAR(CalendarPage())
 }
